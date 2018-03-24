@@ -40,7 +40,7 @@ class ViewController: UIViewController {
         Network.shared.callService(withRequest: request) { (response: Network.Response<Post>) in
             switch response {
             case .OK(let post): print(post)
-            case .KO(let error): print(error.message)
+            case .KO(let error): print(error.description)
             }
         }
         

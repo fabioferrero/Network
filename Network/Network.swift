@@ -9,14 +9,14 @@
 import Foundation
 import UIKit
 
-enum NetworkError: Error {
+enum NetworkError: Error, CustomStringConvertible {
     case invalidURL
     case missingData
     case encodingError(errorMessage: String)
     case decodingError(errorMessage: String)
     case networkError(errorMessage: String)
     
-    var message: String {
+    var description: String {
         switch self {
         case .invalidURL: return "Invalid URL in request: cannot create URL from String."
         case .missingData: return "Missing data in response."
@@ -115,8 +115,9 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
         dataBuffers[dataTask]?.append(data)
     }
     
+    /// This delegate method id called when the `dowloadTask` has finished its
+    /// work of downloading. It wrote in `location` all dowloaded data.
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        
         do {
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)
@@ -156,6 +157,11 @@ extension Network {
         do {
             let data = try JSONEncoder().encode(request.payload)
             
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let log = "⬆️ REQUEST to: \(url)\n\(jsonString)"
+                print(log)
+            }
+        
             let httpRequest = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
             httpRequest.httpMethod = "POST"
             httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
@@ -163,7 +169,7 @@ extension Network {
             
             let downloadTask = backgroundSession.downloadTask(with: httpRequest as URLRequest)
             
-            add(task: downloadTask, withRelatedCompletionHandler: { data, urlResponse, error in
+            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { data, urlResponse, error in
                 defer { self.remove(task: downloadTask) }
                 
                 if let error = error {
@@ -171,6 +177,11 @@ extension Network {
                 } else {
                     guard let data = data else {
                         callback(Response.KO(error: .missingData)); return
+                    }
+                    
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        let log = "⬇️ RESPONSE from: \(url)\n\(jsonString)"
+                        print(log)
                     }
                     
                     do {
@@ -188,27 +199,27 @@ extension Network {
         }
     }
     
-    func callService<Decodable>(withURL url: URL, callback: @escaping (_ response: Response<Decodable>) -> Void) {
-        
-        let dataTask = backgroundSession.dataTask(with: url)
-        
-        add(task: dataTask, withRelatedCompletionHandler: { data, urlResponse, error in
-            defer { self.remove(task: dataTask) }
-            
-            if let error = error {
-                callback(Response.KO(error: .networkError(errorMessage: error.localizedDescription)))
-            } else {
-                guard let data = data else { return }
-                
-                do {
-                    let response = try JSONDecoder().decode(Decodable.self, from: data)
-                    callback(Response.OK(response: response))
-                } catch {
-                    callback(Response.KO(error: .decodingError(errorMessage: error.localizedDescription)))
-                }
-            }
-        })
-        
-        dataTask.resume()
-    }
+//    func callService<Decodable>(withURL url: URL, callback: @escaping (_ response: Response<Decodable>) -> Void) {
+//
+//        let dataTask = backgroundSession.dataTask(with: url)
+//
+//        Network.shared.add(task: dataTask, withRelatedCompletionHandler: { data, urlResponse, error in
+//            defer { self.remove(task: dataTask) }
+//
+//            if let error = error {
+//                callback(Response.KO(error: .networkError(errorMessage: error.localizedDescription)))
+//            } else {
+//                guard let data = data else { return }
+//
+//                do {
+//                    let response = try JSONDecoder().decode(Decodable.self, from: data)
+//                    callback(Response.OK(response: response))
+//                } catch {
+//                    callback(Response.KO(error: .decodingError(errorMessage: error.localizedDescription)))
+//                }
+//            }
+//        })
+//
+//        dataTask.resume()
+//    }
 }
