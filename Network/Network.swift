@@ -37,6 +37,12 @@ extension Network {
     }
 }
 
+protocol Service {
+    static var url: String { get }
+    associatedtype Input: Encodable
+    associatedtype Output: Decodable
+}
+
 final class Network: NSObject {
     
     static let shared: Network = Network()
@@ -46,9 +52,13 @@ final class Network: NSObject {
         case KO(error: NetworkError)
     }
     
-    struct Request<E: Encodable> {
-        var serviceUrl: String
-        var payload: E
+    struct Request<S: Service> {
+        var serviceUrl: String = S.url
+        var payload: S.Input
+        
+        init(payload: S.Input) {
+            self.payload = payload
+        }
     }
     
     // MARK: Sessions
@@ -147,6 +157,57 @@ extension Network {
 // MARK: - Calls
 
 extension Network {
+    
+    func callService<S>(withNewRequest request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
+        
+        guard let url = URL(string: request.serviceUrl) else {
+            callback(Response.KO(error: .invalidURL)); return
+        }
+        
+        do {
+            let data = try JSONEncoder().encode(request.payload)
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                let log = "⬆️ REQUEST to: \(url)\n\(jsonString)"
+                print(log)
+            }
+            
+            let httpRequest = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
+            httpRequest.httpMethod = "POST"
+            httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
+            httpRequest.httpBody = data // It is possible to encrypt this data here
+            
+            let downloadTask = backgroundSession.downloadTask(with: httpRequest as URLRequest)
+            
+            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { data, urlResponse, error in
+                defer { self.remove(task: downloadTask) }
+                
+                if let error = error {
+                    callback(Response.KO(error: .networkError(errorMessage: error.localizedDescription)))
+                } else {
+                    guard let data = data else {
+                        callback(Response.KO(error: .missingData)); return
+                    }
+                    
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        let log = "⬇️ RESPONSE from: \(url)\n\(jsonString)"
+                        print(log)
+                    }
+                    
+                    do {
+                        let response = try JSONDecoder().decode(S.Output.self, from: data)
+                        callback(Response.OK(response: response))
+                    } catch {
+                        callback(Response.KO(error: .decodingError(errorMessage: error.localizedDescription)))
+                    }
+                }
+            })
+            
+            downloadTask.resume()
+        } catch {
+            callback(Response.KO(error: .encodingError(errorMessage: error.localizedDescription)))
+        }
+    }
     
     func callService<E, D>(withRequest request: Request<E>, callback: @escaping (_ response: Response<D>) -> Void) {
         

@@ -29,15 +29,35 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
     
+    struct MyService: Service {
+        
+        static var url: String = "https://jsonplaceholder.typicode.com/posts"
+        
+        struct Input: Encodable {
+            var userId: Int
+            var title: String
+            var body: String
+        }
+        
+        struct Output: Decodable {
+            var userId: Int
+            var id: Int
+            var title: String
+            var body: String
+        }
+    }
+    
     @IBAction func callButtonTapped() {
         
-        let serviceURL = "https://jsonplaceholder.typicode.com/posts"
-
-        let post = NewPost(userId: 14, title: "NewPost", body: "Lorem Ipsum Dolor sit Amet")
-
-        let request = Network.Request(serviceUrl: serviceURL, payload: post)
-
-        Network.shared.callService(withRequest: request) { (response: Network.Response<Post>) in
+        let input = MyService.Input(
+            userId: 14,
+            title: "NewPost",
+            body: "Lorem Ipsum Dolor sit Amet"
+        )
+        
+        let request = Network.Request<MyService>(payload: input)
+        
+        Network.shared.callService(withNewRequest: request) { response in
             switch response {
             case .OK(let post): print(post)
             case .KO(let error): print(error.description)
