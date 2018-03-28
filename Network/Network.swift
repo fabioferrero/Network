@@ -80,6 +80,16 @@ final class Network: NSObject {
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
+    // MARK: Encoder & Decoder
+    private lazy var encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        return encoder
+    }()
+    private lazy var decoder: JSONDecoder = {
+        return JSONDecoder()
+    }()
+    
     // Make the initializer private for the singleton
     private override init() { super.init() }
 }
@@ -95,7 +105,7 @@ extension Network {
         }
         
         do {
-            let data = try JSONEncoder().encode(request.payload)
+            let data = try encoder.encode(request.payload)
             
             if let jsonString = String(data: data, encoding: .utf8) {
                 let log = "⬆️ REQUEST to: \(url)\n\(jsonString)"
@@ -125,7 +135,7 @@ extension Network {
                     }
                     
                     do {
-                        let response = try JSONDecoder().decode(S.Output.self, from: data)
+                        let response = try self.decoder.decode(S.Output.self, from: data)
                         callback(Response.OK(response: response))
                     } catch {
                         callback(Response.KO(error: .decodingError(errorMessage: error.localizedDescription)))
