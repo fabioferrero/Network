@@ -33,18 +33,8 @@ class ViewController: UIViewController {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
         
-        struct Input: Encodable {
-            var userId: Int
-            var title: String
-            var body: String
-        }
-        
-        struct Output: Decodable {
-            var userId: Int
-            var id: Int
-            var title: String
-            var body: String
-        }
+        typealias Input = NewPost
+        typealias Output = Post
     }
     
     @IBAction func callButtonTapped() {
@@ -59,22 +49,9 @@ class ViewController: UIViewController {
         
         Network.shared.callService(withNewRequest: request) { response in
             switch response {
-            case .OK(let post): print(post)
+            case .OK(let post): print("NewPost correctly created: \(post)")
             case .KO(let error): print(error.description)
             }
         }
-        
-//        for i in index..<(index + 5) {
-//            guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts/\(i)") else { return }
-//
-//            Network.shared.callService(withURL: url) { (response: Network.Response<Post>) in
-//                switch response {
-//                case .OK(let post): print(post)
-//                case .KO(let error): print(error.message)
-//                }
-//            }
-//        }
-//
-//        index += 5
     }
 }
