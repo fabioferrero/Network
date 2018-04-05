@@ -47,7 +47,7 @@ class ViewController: UIViewController {
     }
     
     func use(_ any: Any) {
-        print("Using: ", String(describing: any))
+        print("Using:", String(describing: any))
     }
 }
 
@@ -57,6 +57,6 @@ final class Alert {
     private init() {}
     
     func show(_ any: Any) {
-        print("Alert: ", String(describing: any))
+        print("Alert:", String(describing: any))
     }
 }
