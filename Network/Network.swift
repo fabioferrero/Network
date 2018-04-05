@@ -59,13 +59,7 @@ final class Network: NSObject {
     }
     
     struct Request<S: Service> {
-        var url: String
         var payload: S.Input
-        
-        init(payload: S.Input) {
-            self.url = S.url
-            self.payload = payload
-        }
     }
     
     // MARK: Sessions
@@ -102,7 +96,7 @@ extension Network {
     
     func callService<S: Service>(with request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
         
-        guard let url = URL(string: request.url) else {
+        guard let url = URL(string: S.url) else {
             callback(Response.KO(error: .invalidURL)); return
         }
         
