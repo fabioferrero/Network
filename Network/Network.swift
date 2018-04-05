@@ -42,6 +42,7 @@ extension Network {
 // ready with itself.
 protocol Service {
     static var url: String { get }
+    
     associatedtype Input: Encodable
     associatedtype Output: Decodable
 }
@@ -52,17 +53,18 @@ final class Network: NSObject {
     /// means of this `shared` instance.
     static let shared: Network = Network()
     
-    enum Response<D: Decodable> {
-        case OK(response: D)
+    enum Response<Output: Decodable> {
+        case OK(response: Output)
         case KO(error: NetworkError)
     }
     
     struct Request<S: Service> {
-        var serviceUrl: String = S.url
+        var url: String
         var payload: S.Input
         
-        init(payload: S.Input) {
-            self.payload = payload
+        init(input: S.Input) {
+            self.url = S.url
+            self.payload = input
         }
     }
     
@@ -98,9 +100,9 @@ final class Network: NSObject {
 
 extension Network {
     
-    func callService<S>(withNewRequest request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
+    func callService<S: Service>(with request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
         
-        guard let url = URL(string: request.serviceUrl) else {
+        guard let url = URL(string: request.url) else {
             callback(Response.KO(error: .invalidURL)); return
         }
         
