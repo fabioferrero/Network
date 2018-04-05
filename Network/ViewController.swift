@@ -23,6 +23,10 @@ class ViewController: UIViewController {
         var body: String
     }
     
+    // I define my custom service as a struct or class conforming to the Service
+    // protocol, so that it contains the proper service `url` and define the
+    // corresponding `Input` and `Output` types, that must be, in order,
+    // conforming to the `Encodable` and `Decodable` protocols.
     struct MyService: Service {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
@@ -36,7 +40,8 @@ class ViewController: UIViewController {
     }
     
     func preferredBehavior() {
-        let request = Network.Request<MyService>(input: NewPost(userId: 3, title: "Title", body: "Body"))
+        let newPost = NewPost(userId: 3, title: "Title", body: "Body")
+        let request = Network.Request<MyService>(payload: newPost)
         
         Network.shared.callService(with: request) { response in
             switch response {

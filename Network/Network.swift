@@ -62,9 +62,9 @@ final class Network: NSObject {
         var url: String
         var payload: S.Input
         
-        init(input: S.Input) {
+        init(payload: S.Input) {
             self.url = S.url
-            self.payload = input
+            self.payload = payload
         }
     }
     
