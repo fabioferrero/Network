@@ -23,12 +23,6 @@ class ViewController: UIViewController {
         var body: String
     }
     
-    var index: Int = 1
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     struct MyService: Service {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
@@ -38,20 +32,31 @@ class ViewController: UIViewController {
     }
     
     @IBAction func callButtonTapped() {
+        preferredBehavior()
+    }
+    
+    func preferredBehavior() {
+        let request = Network.Request<MyService>(input: NewPost(userId: 3, title: "Title", body: "Body"))
         
-        let input = MyService.Input(
-            userId: 14,
-            title: "NewPost",
-            body: "Lorem Ipsum Dolor sit Amet"
-        )
-        
-        let request = Network.Request<MyService>(payload: input)
-        
-        Network.shared.callService(withNewRequest: request) { response in
+        Network.shared.callService(with: request) { response in
             switch response {
-            case .OK(let post): print("NewPost correctly created: \(post)")
-            case .KO(let error): print(error.description)
+            case .OK(let theObjectThatIsNeeded): self.use(theObjectThatIsNeeded)
+            case .KO(let error): Alert.shared.show(error)
             }
         }
+    }
+    
+    func use(_ any: Any) {
+        print("Using: ", String(describing: any))
+    }
+}
+
+final class Alert {
+    
+    static let shared: Alert = Alert()
+    private init() {}
+    
+    func show(_ any: Any) {
+        print("Alert: ", String(describing: any))
     }
 }
