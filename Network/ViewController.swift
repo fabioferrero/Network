@@ -15,6 +15,10 @@ class ViewController: UIViewController {
         var id: Int
         var title: String
         var body: String
+        
+        func foo() {
+            print("foo!")
+        }
     }
     
     struct NewPost: Encodable {
@@ -36,16 +40,18 @@ class ViewController: UIViewController {
     }
     
     @IBAction func callButtonTapped() {
-        preferredBehavior()
+        callMyService()
     }
     
-    func preferredBehavior() {
+    func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
         let request = Network.Request<MyService>(payload: newPost)
         
         Network.shared.callService(with: request) { response in
             switch response {
-            case .OK(let theObjectThatIsNeeded): self.use(theObjectThatIsNeeded)
+            case .OK(let thePostThatYouWereWaitingFor):
+                self.use(thePostThatYouWereWaitingFor)
+                thePostThatYouWereWaitingFor.foo()
             case .KO(let error): Alert.shared.show(error)
             }
         }
