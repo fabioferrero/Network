@@ -17,7 +17,7 @@ class ViewController: UIViewController {
         var body: String
         
         func foo() {
-            print("foo!")
+            print("foo on \(String(describing: self))! foo!")
         }
     }
     
@@ -52,7 +52,9 @@ class ViewController: UIViewController {
             case .OK(let thePostThatYouWereWaitingFor):
                 self.use(thePostThatYouWereWaitingFor)
                 thePostThatYouWereWaitingFor.foo()
-            case .KO(let error): Alert.shared.show(error)
+            case .KO(let error):
+                let alert = Alert(title: "Error", message: error.description)
+                alert.show(from: self)
             }
         }
     }
@@ -62,12 +64,25 @@ class ViewController: UIViewController {
     }
 }
 
-final class Alert {
+class Alert {
     
-    static let shared: Alert = Alert()
-    private init() {}
+    let title: String
+    let message: String
     
-    func show(_ any: Any) {
-        print("Alert:", String(describing: any))
+    private var alertController: UIAlertController
+    
+    init(title: String, message: String) {
+        
+        self.title = title
+        self.message = message
+        
+        self.alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    }
+    
+    func show(from viewController: UIViewController) {
+        let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(alertAction)
+        
+        viewController.showDetailViewController(alertController, sender: nil)
     }
 }
