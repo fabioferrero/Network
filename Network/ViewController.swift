@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     // protocol, so that it contains the proper service `url` and define the
     // corresponding `Input` and `Output` types, that must be, in order,
     // conforming to the `Encodable` and `Decodable` protocols.
-    struct MyService: Service {
+    struct MyService: NetworkService {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
         
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         typealias Output = Post
     }
     
-    struct ErrorService: Service {
+    struct ErrorService: NetworkService {
         static var url: String = "https://fakeservice.error/"
         struct Input: Encodable {};
         struct Output: Decodable {};

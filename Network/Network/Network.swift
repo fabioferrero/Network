@@ -9,48 +9,6 @@
 import Foundation
 import UIKit
 
-enum NetworkError: Error, CustomStringConvertible {
-    case invalidURL
-    case missingData
-    case encodingError(errorMessage: String)
-    case decodingError(errorMessage: String)
-    case networkError(errorMessage: String)
-    
-    var description: String {
-        switch self {
-        case .invalidURL: return "Invalid URL in request: cannot create URL from String."
-        case .missingData: return "Missing data in response."
-        case .encodingError(let errorMessage): return "Error during payload encoding: \(errorMessage)"
-        case .decodingError(let errorMessage): return "Error during data decoding: \(errorMessage)"
-        case .networkError(let errorMessage): return errorMessage
-        }
-    }
-    
-    var localizedDescription: String {
-        return self.description
-    }
-}
-
-// MARK: - Data Structures
-
-extension Network {
-    
-    struct Constants {
-        static let sessionIdentifier = "Network.BackgroundSessionIdentifier"
-        static let timeoutInterval: TimeInterval = 20
-    }
-}
-
-// TODO: Service Extension
-// Add an extension to the `Service` protocol so that it can return a Request
-// ready with itself.
-protocol Service {
-    static var url: String { get }
-    
-    associatedtype Input: Encodable
-    associatedtype Output: Decodable
-}
-
 final class Network: NSObject {
     
     /// The singleton for the Network class. This class can be used only by
@@ -63,7 +21,7 @@ final class Network: NSObject {
         case KO(error: NetworkError)
     }
     
-    struct Request<S: Service> {
+    struct Request<S: NetworkService> {
         var payload: S.Input
     }
     
@@ -96,7 +54,7 @@ final class Network: NSObject {
 
 extension Network {
     
-    func callService<S: Service>(with request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
+    func callService<S: NetworkService>(with request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
         
         guard let url = URL(string: S.url) else {
             callback(Response.KO(error: .invalidURL)); return
@@ -143,6 +101,16 @@ extension Network {
         } catch {
             callback(Response.KO(error: .encodingError(errorMessage: error.localizedDescription)))
         }
+    }
+}
+
+// MARK - Constants
+
+extension Network {
+    
+    struct Constants {
+        static let sessionIdentifier = "Network.BackgroundSessionIdentifier"
+        static let timeoutInterval: TimeInterval = 20
     }
 }
 
