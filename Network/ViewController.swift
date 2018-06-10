@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var errorSwitch: UISwitch!
+    
     struct Post: Decodable {
         var userId: Int
         var id: Int
@@ -39,8 +41,33 @@ class ViewController: UIViewController {
         typealias Output = Post
     }
     
+    struct ErrorService: Service {
+        static var url: String = "https://fakeservice.error/"
+        struct I: Encodable {}; typealias Input = I
+        struct O: Decodable {}; typealias Output = O
+    }
+    
     @IBAction func callButtonTapped() {
-        callMyService()
+        if errorSwitch.isOn {
+            callErrorService()
+        } else {
+            callMyService()
+        }
+    }
+    
+    func callErrorService() {
+        let request = Network.Request<ErrorService>(payload: ErrorService.I())
+        
+        Network.shared.callService(with: request) { response in
+            switch response {
+            case .OK:
+                let alert = Alert(title: "Success", message: "It was actually a real success.")
+                alert.show(from: self)
+            case .KO(let error):
+                let alert = Alert(title: "Error", message: error.description)
+                alert.show(from: self)
+            }
+        }
     }
     
     func callMyService() {

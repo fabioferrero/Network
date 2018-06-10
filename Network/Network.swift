@@ -25,6 +25,10 @@ enum NetworkError: Error, CustomStringConvertible {
         case .networkError(let errorMessage): return errorMessage
         }
     }
+    
+    var localizedDescription: String {
+        return self.description
+    }
 }
 
 // MARK: - Data Structures
@@ -52,6 +56,7 @@ final class Network: NSObject {
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
     static let shared: Network = Network()
+    private override init() { super.init() }
     
     enum Response<Output: Decodable> {
         case OK(response: Output)
@@ -85,9 +90,6 @@ final class Network: NSObject {
     private lazy var decoder: JSONDecoder = {
         return JSONDecoder()
     }()
-    
-    // Make the initializer private for the singleton
-    private override init() { super.init() }
 }
 
 // MARK: - Calls
