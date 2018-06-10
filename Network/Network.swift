@@ -106,8 +106,7 @@ extension Network {
             let data = try encoder.encode(request.payload)
             
             if let jsonString = String(data: data, encoding: .utf8) {
-                let log = "⬆️ REQUEST to: \(url)\n\(jsonString)"
-                print(log)
+                Logger.log(.info, message: "⬆️ Request to: \(url)\n\(jsonString)")
             }
             
             let httpRequest = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
@@ -128,8 +127,7 @@ extension Network {
                     }
                     
                     if let jsonString = String(data: data, encoding: .utf8) {
-                        let log = "⬇️ RESPONSE from: \(url)\n\(jsonString)"
-                        print(log)
+                        Logger.log(.info, message: "⬇️ Response from: \(url)\n\(jsonString)")
                     }
                     
                     do {
@@ -220,7 +218,7 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)
         } catch {
-            print(error.localizedDescription)
+            Logger.log(.error, message: error.localizedDescription)
         }
     }
 }

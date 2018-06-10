@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         var body: String
         
         func foo() {
-            print("foo on \(String(describing: self))! foo!")
+            Logger.log(.verbose, message: "foo on \(String(describing: self))! foo!")
         }
     }
     
@@ -43,8 +43,8 @@ class ViewController: UIViewController {
     
     struct ErrorService: Service {
         static var url: String = "https://fakeservice.error/"
-        struct I: Encodable {}; typealias Input = I
-        struct O: Decodable {}; typealias Output = O
+        struct Input: Encodable {};
+        struct Output: Decodable {};
     }
     
     @IBAction func callButtonTapped() {
@@ -56,7 +56,7 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        let request = Network.Request<ErrorService>(payload: ErrorService.I())
+        let request = Network.Request<ErrorService>(payload: ErrorService.Input())
         
         Network.shared.callService(with: request) { response in
             switch response {
@@ -87,7 +87,7 @@ class ViewController: UIViewController {
     }
     
     func use(_ any: Any) {
-        print("Using:", String(describing: any))
+        Logger.log(.verbose, message: "Using: \(any)")
     }
 }
 
