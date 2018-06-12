@@ -12,13 +12,14 @@ final class MockRepository: Repository {
     
     private var job: DispatchWorkItem = DispatchWorkItem(block: {})
     
-    func perform(request: Request, completion: @escaping ((Response) -> Void)) {
+    func perform<S: Service>(_ request: Request<S>, onCompletion: @escaping (Response<S.Output>) -> Void) {
         
         let randomDelay = Int(arc4random_uniform(2)) + 1
+        let response: S.Output = try! JSONDecoder().decode(S.Output.self, from: Data())
         
         job = DispatchWorkItem(block: {
             DispatchQueue.main.async {
-                completion(Response(data: Data()))
+                onCompletion(Response.OK(response: response))
             }
         })
         

@@ -8,19 +8,22 @@
 
 import Foundation
 
-final class FakeDataService {
+final class MockedDataService {
     
-    private let repository: Repository
+    private let repository: Repository = MockRepository()
     
-    init(repository: Repository) {
-        self.repository = repository
+    struct FakeService: Service {
+        typealias Input = String
+        typealias Output = String
+        
+        static var url: String = ""
     }
     
     private func fakeService(completion: @escaping () -> Void)  {
         
-        let request = Request(parameters: [:])
+        let request = Request<FakeService>(payload: "mockRequest")
         
-        repository.perform(request: request) { repsonse in
+        repository.perform(request) { response in
             completion()
         }
     }

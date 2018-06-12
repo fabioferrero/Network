@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     // protocol, so that it contains the proper service `url` and define the
     // corresponding `Input` and `Output` types, that must be, in order,
     // conforming to the `Encodable` and `Decodable` protocols.
-    struct MyService: NetworkService {
+    struct MyService: Service {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
         
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         typealias Output = Post
     }
     
-    struct ErrorService: NetworkService {
+    struct ErrorService: Service {
         static var url: String = "https://fakeservice.error/"
         struct Input: Encodable {};
         struct Output: Decodable {};
@@ -56,15 +56,15 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        let request = Network.Request<ErrorService>(payload: ErrorService.Input())
+        let request = Request<ErrorService>(payload: ErrorService.Input())
         
-        Network.shared.callService(with: request) { response in
+        Network.shared.perform(request) { response in
             switch response {
             case .OK:
                 let alert = Alert(title: "Success", message: "It was actually a real success.")
                 alert.show(from: self)
             case .KO(let error):
-                let alert = Alert(title: "Error", message: error.description)
+                let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
         }
@@ -72,15 +72,15 @@ class ViewController: UIViewController {
     
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
-        let request = Network.Request<MyService>(payload: newPost)
+        let request = Request<MyService>(payload: newPost)
         
-        Network.shared.callService(with: request) { response in
+        Network.shared.perform(request) { response in
             switch response {
             case .OK(let thePostThatYouWereWaitingFor):
                 self.use(thePostThatYouWereWaitingFor)
                 thePostThatYouWereWaitingFor.foo()
             case .KO(let error):
-                let alert = Alert(title: "Error", message: error.description)
+                let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
         }

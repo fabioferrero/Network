@@ -10,11 +10,7 @@ import Foundation
 
 enum DataService {
     
-    static var repository: Repository {
-        return Session.default.repository
-    }
+    static var repository: Repository = Network.shared
     
-    static var fake: FakeDataService {
-        return FakeDataService(repository: repository)
-    }
+    static var mocked = MockedDataService()
 }

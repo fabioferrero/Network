@@ -9,23 +9,14 @@
 import Foundation
 import UIKit
 
-final class Network: NSObject {
+final class Network: NSObject, Repository {
     
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
     static let shared: Network = Network()
     private override init() { super.init() }
     
-    enum Response<Output: Decodable> {
-        case OK(response: Output)
-        case KO(error: NetworkError)
-    }
-    
-    struct Request<S: NetworkService> {
-        var payload: S.Input
-    }
-    
-    // MARK: Sessions
+    // MARK: Session
     private lazy var backgroundSession: URLSession = {
         let configuration: URLSessionConfiguration = .background(withIdentifier: Constants.sessionIdentifier)
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
@@ -48,16 +39,11 @@ final class Network: NSObject {
     private lazy var decoder: JSONDecoder = {
         return JSONDecoder()
     }()
-}
-
-// MARK: - Calls
-
-extension Network {
     
-    func callService<S: NetworkService>(with request: Request<S>, callback: @escaping (_ response: Response<S.Output>) -> Void) {
+    func perform<S>(_ request: Request<S>, onCompletion: @escaping (_ response: Response<S.Output>) -> Void) where S: Service {
         
         guard let url = URL(string: S.url) else {
-            callback(Response.KO(error: .invalidURL)); return
+            onCompletion(Response.KO(error: NetworkError.invalidURL)); return
         }
         
         do {
@@ -78,10 +64,10 @@ extension Network {
                 defer { self.remove(task: downloadTask) }
                 
                 if let error = error {
-                    callback(Response.KO(error: .networkError(errorMessage: error.localizedDescription)))
+                    onCompletion(Response.KO(error: NetworkError.networkError(errorMessage: error.localizedDescription)))
                 } else {
                     guard let data = data else {
-                        callback(Response.KO(error: .missingData)); return
+                        onCompletion(Response.KO(error: NetworkError.missingData)); return
                     }
                     
                     if let jsonString = String(data: data, encoding: .utf8) {
@@ -90,16 +76,16 @@ extension Network {
                     
                     do {
                         let response = try self.decoder.decode(S.Output.self, from: data)
-                        callback(Response.OK(response: response))
+                        onCompletion(Response.OK(response: response))
                     } catch {
-                        callback(Response.KO(error: .decodingError(errorMessage: error.localizedDescription)))
+                        onCompletion(Response.KO(error: NetworkError.decodingError(errorMessage: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            callback(Response.KO(error: .encodingError(errorMessage: error.localizedDescription)))
+            onCompletion(Response.KO(error: NetworkError.encodingError(errorMessage: error.localizedDescription)))
         }
     }
 }

@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum NetworkError: Error, CustomStringConvertible {
+enum NetworkError: Error {
     case invalidURL
     case missingData
     case encodingError(errorMessage: String)
     case decodingError(errorMessage: String)
     case networkError(errorMessage: String)
     
-    var description: String {
+    var localizedDescription: String {
         switch self {
         case .invalidURL: return "Invalid URL in request: cannot create URL from String."
         case .missingData: return "Missing data in response."
@@ -23,9 +23,5 @@ enum NetworkError: Error, CustomStringConvertible {
         case .decodingError(let errorMessage): return "Error during data decoding: \(errorMessage)"
         case .networkError(let errorMessage): return errorMessage
         }
-    }
-    
-    var localizedDescription: String {
-        return self.description
     }
 }
