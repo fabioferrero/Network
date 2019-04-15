@@ -40,7 +40,7 @@ final class Network: NSObject, Repository {
         return JSONDecoder()
     }()
     
-    func perform<S>(_ request: Request<S>, onCompletion: @escaping (_ response: Response<S.Output>) -> Void) where S: Service {
+    func perform<S: Service>(_ request: Request<S>, onCompletion: @escaping (_ response: Response<S.Output>) -> Void) {
         
         guard let url = URL(string: S.url) else {
             onCompletion(Response.KO(error: NetworkError.invalidURL)); return

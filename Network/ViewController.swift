@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     // protocol, so that it contains the proper service `url` and define the
     // corresponding `Input` and `Output` types, that must be, in order,
     // conforming to the `Encodable` and `Decodable` protocols.
-    struct MyService: Service {
+    struct CreateNewPost: Service {
         
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
         
@@ -72,7 +72,7 @@ class ViewController: UIViewController {
     
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
-        let request = Request<MyService>(payload: newPost)
+        let request = Request<CreateNewPost>(payload: newPost)
         
         Network.shared.perform(request) { response in
             switch response {

@@ -10,7 +10,8 @@ import Foundation
 
 enum DataService {
     
-    static var repository: Repository = Network.shared
+    static var networkRepository: Repository = Network.shared
+    static var repository: Repository = MockRepository()
     
     static var mocked = MockedDataService()
 }
