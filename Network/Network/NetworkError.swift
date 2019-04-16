@@ -11,9 +11,9 @@ import Foundation
 enum NetworkError: Error {
     case invalidURL
     case missingData
-    case encodingError(errorMessage: String)
-    case decodingError(errorMessage: String)
-    case networkError(errorMessage: String)
+    case encodingError(message: String)
+    case decodingError(message: String)
+    case networkError(message: String)
     
     var localizedDescription: String {
         switch self {

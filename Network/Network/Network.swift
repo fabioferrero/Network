@@ -127,7 +127,7 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(NetworkError.networkError(errorMessage: error.localizedDescription)))
+                    onCompletion(Result.failure(NetworkError.networkError(message: error.localizedDescription)))
                 } else {
                     guard var data = data else {
                         onCompletion(Result.failure(NetworkError.missingData)); return
@@ -145,14 +145,14 @@ final class Network: NSObject, Repository {
                         let response = try self.decoder.decode(S.Output.self, from: data)
                         onCompletion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(NetworkError.decodingError(errorMessage: error.localizedDescription)))
+                        onCompletion(Result.failure(NetworkError.decodingError(message: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(NetworkError.encodingError(errorMessage: error.localizedDescription)))
+            onCompletion(Result.failure(NetworkError.encodingError(message: error.localizedDescription)))
         }
     }
     
@@ -181,7 +181,7 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(NetworkError.networkError(errorMessage: error.localizedDescription)))
+                    onCompletion(Result.failure(NetworkError.networkError(message: error.localizedDescription)))
                 } else {
                     guard let data = data else {
                         onCompletion(Result.failure(NetworkError.missingData)); return
@@ -195,14 +195,14 @@ final class Network: NSObject, Repository {
                         let response = try self.decoder.decode(S.Output.self, from: data)
                         onCompletion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(NetworkError.decodingError(errorMessage: error.localizedDescription)))
+                        onCompletion(Result.failure(NetworkError.decodingError(message: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(NetworkError.encodingError(errorMessage: error.localizedDescription)))
+            onCompletion(Result.failure(NetworkError.encodingError(message: error.localizedDescription)))
         }
     }
 }
