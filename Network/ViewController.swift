@@ -81,19 +81,6 @@ class ViewController: UIViewController {
                 alert.show(from: self)
             }
         }
-        
-        let request = Request<CreateNewPost>(payload: newPost)
-        
-        Network.shared.perform(request) { response in
-            switch response {
-            case .success(let thePostThatYouWereWaitingFor):
-                self.use(thePostThatYouWereWaitingFor)
-                thePostThatYouWereWaitingFor.foo()
-            case .failure(let error):
-                let alert = Alert(title: "Error", message: error.localizedDescription)
-                alert.show(from: self)
-            }
-        }
     }
     
     func use(_ post: Post) {

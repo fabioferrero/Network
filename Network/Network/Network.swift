@@ -38,11 +38,6 @@ struct Request<S: Service> {
     var payload: S.Input
 }
 
-enum Result<Output> {
-    case success(response: Output)
-    case failure(error: Error)
-}
-
 protocol SecurityManager {
     func encrypt(data: Data) -> Data
     func decrypt(data: Data) -> Data
@@ -107,10 +102,10 @@ final class Network: NSObject, Repository {
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
-    func perform<S: Service>(_ request: Request<S>, onCompletion: @escaping (_ response: Result<S.Output>) -> Void) {
+    func perform<S: Service>(_ request: Request<S>, onCompletion: @escaping (_ response: Result<S.Output, Error>) -> Void) {
         
         guard let url = URL(string: S.url) else {
-            onCompletion(Result.failure(error: NetworkError.invalidURL)); return
+            onCompletion(Result.failure(NetworkError.invalidURL)); return
         }
         
         do {
@@ -132,10 +127,10 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(error: NetworkError.networkError(errorMessage: error.localizedDescription)))
+                    onCompletion(Result.failure(NetworkError.networkError(errorMessage: error.localizedDescription)))
                 } else {
                     guard var data = data else {
-                        onCompletion(Result.failure(error: NetworkError.missingData)); return
+                        onCompletion(Result.failure(NetworkError.missingData)); return
                     }
                     
                     if let securityManager = self.securityManager {
@@ -148,23 +143,23 @@ final class Network: NSObject, Repository {
                     
                     do {
                         let response = try self.decoder.decode(S.Output.self, from: data)
-                        onCompletion(Result.success(response: response))
+                        onCompletion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(error: NetworkError.decodingError(errorMessage: error.localizedDescription)))
+                        onCompletion(Result.failure(NetworkError.decodingError(errorMessage: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(error: NetworkError.encodingError(errorMessage: error.localizedDescription)))
+            onCompletion(Result.failure(NetworkError.encodingError(errorMessage: error.localizedDescription)))
         }
     }
     
-    func callService<S: Service, Input, Output>(_ service: S, input: Input, onCompletion: @escaping (_ response: Result<Output>) -> Void) where Input == S.Input, Output == S.Output {
+    func callService<S: Service, Input, Output>(_ service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         guard let url = URL(string: S.url) else {
-            onCompletion(Result.failure(error: NetworkError.invalidURL)); return
+            onCompletion(Result.failure(NetworkError.invalidURL)); return
         }
         
         do {
@@ -186,10 +181,10 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(error: NetworkError.networkError(errorMessage: error.localizedDescription)))
+                    onCompletion(Result.failure(NetworkError.networkError(errorMessage: error.localizedDescription)))
                 } else {
                     guard let data = data else {
-                        onCompletion(Result.failure(error: NetworkError.missingData)); return
+                        onCompletion(Result.failure(NetworkError.missingData)); return
                     }
                     
                     if let jsonString = String(data: data, encoding: .utf8) {
@@ -198,16 +193,16 @@ final class Network: NSObject, Repository {
                     
                     do {
                         let response = try self.decoder.decode(S.Output.self, from: data)
-                        onCompletion(Result.success(response: response))
+                        onCompletion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(error: NetworkError.decodingError(errorMessage: error.localizedDescription)))
+                        onCompletion(Result.failure(NetworkError.decodingError(errorMessage: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(error: NetworkError.encodingError(errorMessage: error.localizedDescription)))
+            onCompletion(Result.failure(NetworkError.encodingError(errorMessage: error.localizedDescription)))
         }
     }
 }
