@@ -10,14 +10,5 @@ import Foundation
 
 /// Defines a general interface on witch any DataService must rely on.
 protocol Repository {
-    func perform<S: Service>(_ request: Request<S>, onCompletion: @escaping (Response<S.Output>) -> Void)
-}
-
-struct Request<S: Service> {
-    var payload: S.Input
-}
-
-enum Response<Output: Decodable> {
-    case OK(response: Output)
-    case KO(error: Error)
+    func callService<S: Service>(_ service: S, input: S.Input, onCompletion: @escaping (_ response: Result<S.Output>) -> Void)
 }

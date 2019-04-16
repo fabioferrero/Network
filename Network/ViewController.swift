@@ -34,7 +34,7 @@ class ViewController: UIViewController {
     // corresponding `Input` and `Output` types, that must be, in order,
     // conforming to the `Encodable` and `Decodable` protocols.
     struct CreateNewPost: Service {
-        
+        static var method: HTTPMethod = .post
         static var url: String = "https://jsonplaceholder.typicode.com/posts"
         
         typealias Input = NewPost
@@ -42,6 +42,7 @@ class ViewController: UIViewController {
     }
     
     struct ErrorService: Service {
+        static var method: HTTPMethod = .post
         static var url: String = "https://fakeservice.error/"
         struct Input: Encodable {};
         struct Output: Decodable {};
@@ -56,14 +57,12 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        let request = Request<ErrorService>(payload: ErrorService.Input())
-        
-        Network.shared.perform(request) { response in
-            switch response {
-            case .OK:
+        Network.shared.callService(ErrorService(), input: ErrorService.Input()) { result in
+            switch result {
+            case .success:
                 let alert = Alert(title: "Success", message: "It was actually a real success.")
                 alert.show(from: self)
-            case .KO(let error):
+            case .failure(error: let error):
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
@@ -72,22 +71,33 @@ class ViewController: UIViewController {
     
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
+        Network.shared.callService(CreateNewPost(), input: newPost) { result in
+            switch result {
+            case .success(let thePostThatYouWereWaitingFor):
+                self.use(thePostThatYouWereWaitingFor)
+                thePostThatYouWereWaitingFor.foo()
+            case .failure(let error):
+                let alert = Alert(title: "Error", message: error.localizedDescription)
+                alert.show(from: self)
+            }
+        }
+        
         let request = Request<CreateNewPost>(payload: newPost)
         
         Network.shared.perform(request) { response in
             switch response {
-            case .OK(let thePostThatYouWereWaitingFor):
+            case .success(let thePostThatYouWereWaitingFor):
                 self.use(thePostThatYouWereWaitingFor)
                 thePostThatYouWereWaitingFor.foo()
-            case .KO(let error):
+            case .failure(let error):
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
         }
     }
     
-    func use(_ any: Any) {
-        Logger.log(.verbose, message: "Using: \(any)")
+    func use(_ post: Post) {
+        Logger.log(.verbose, message: "Using: \(post)")
     }
 }
 

@@ -10,11 +10,7 @@
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
 		B42C08C120CD271300A39F69 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08C020CD271300A39F69 /* NetworkError.swift */; };
-		B42C08C320CD273900A39F69 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08C220CD273900A39F69 /* Service.swift */; };
-		B4E5F0B920CD7D0100D46099 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E5F0B720CD7D0100D46099 /* MockRepository.swift */; };
 		B4E5F0BA20CD7D0100D46099 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E5F0B820CD7D0100D46099 /* Repository.swift */; };
-		B4E5F0BD20CD7D7000D46099 /* MockedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E5F0BB20CD7D7000D46099 /* MockedDataService.swift */; };
-		B4E5F0BE20CD7D7000D46099 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E5F0BC20CD7D7000D46099 /* DataService.swift */; };
 		E14D051A205D7CDF0094A002 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0519205D7CDF0094A002 /* Network.swift */; };
 		E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0322045C2AC00F8C79F /* AppDelegate.swift */; };
 		E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0342045C2AC00F8C79F /* ViewController.swift */; };
@@ -27,11 +23,7 @@
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		B42C08C020CD271300A39F69 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
-		B42C08C220CD273900A39F69 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
-		B4E5F0B720CD7D0100D46099 /* MockRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
 		B4E5F0B820CD7D0100D46099 /* Repository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
-		B4E5F0BB20CD7D7000D46099 /* MockedDataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockedDataService.swift; sourceTree = "<group>"; };
-		B4E5F0BC20CD7D7000D46099 /* DataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		E14D0519205D7CDF0094A002 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		E168D02F2045C2AC00F8C79F /* Network.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Network.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E168D0322045C2AC00F8C79F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,20 +58,8 @@
 			isa = PBXGroup;
 			children = (
 				B4E5F0B820CD7D0100D46099 /* Repository.swift */,
-				B42C08C220CD273900A39F69 /* Service.swift */,
-				B4E5F0B720CD7D0100D46099 /* MockRepository.swift */,
-				B4E5F0B620CD7D0100D46099 /* DataService */,
 			);
 			path = Repository;
-			sourceTree = "<group>";
-		};
-		B4E5F0B620CD7D0100D46099 /* DataService */ = {
-			isa = PBXGroup;
-			children = (
-				B4E5F0BC20CD7D7000D46099 /* DataService.swift */,
-				B4E5F0BB20CD7D7000D46099 /* MockedDataService.swift */,
-			);
-			path = DataService;
 			sourceTree = "<group>";
 		};
 		E168D0262045C2AC00F8C79F = {
@@ -187,16 +167,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4E5F0BD20CD7D7000D46099 /* MockedDataService.swift in Sources */,
 				B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */,
-				B4E5F0B920CD7D0100D46099 /* MockRepository.swift in Sources */,
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
-				B4E5F0BE20CD7D7000D46099 /* DataService.swift in Sources */,
 				B42C08C120CD271300A39F69 /* NetworkError.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
 				E14D051A205D7CDF0094A002 /* Network.swift in Sources */,
-				B42C08C320CD273900A39F69 /* Service.swift in Sources */,
 				B4E5F0BA20CD7D0100D46099 /* Repository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
