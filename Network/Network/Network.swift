@@ -6,12 +6,8 @@
 //  Copyright © 2018 Fabio Ferrero. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
-// TODO: Service Extension
-// Add an extension to the `Service` protocol so that it can return a Request
-// ready with itself.
 protocol Service {
     associatedtype Input: Encodable
     associatedtype Output: Decodable
@@ -34,10 +30,6 @@ extension HTTPMethod: CustomStringConvertible {
     }
 }
 
-struct Request<S: Service> {
-    var payload: S.Input
-}
-
 protocol SecurityManager {
     func encrypt(data: Data) -> Data
     func decrypt(data: Data) -> Data
@@ -48,18 +40,28 @@ protocol DataEncoder {
     func string<Input: Encodable>(for value: Input) -> String?
 }
 
+extension DataEncoder {
+    func string<Input>(for value: Input) -> String? where Input : Encodable {
+        guard let data: Data = try? self.encode(value) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+}
+
 protocol DataDecoder {
     func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output
 }
 
-struct DataManager: DataEncoder, DataDecoder {
+fileprivate struct DataManager: DataEncoder, DataDecoder {
+    
+    static var `default`: DataManager = DataManager()
     
     private var encoder: JSONEncoder
     private var decoder: JSONDecoder
     
-    init() {
+    private init() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
+        
         self.encoder = encoder
         self.decoder = JSONDecoder()
     }
@@ -71,11 +73,6 @@ struct DataManager: DataEncoder, DataDecoder {
     func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output {
         return try decoder.decode(type, from: data)
     }
-    
-    func string<Input>(for value: Input) -> String? where Input : Encodable {
-        guard let data: Data = try? encoder.encode(value) else { return nil }
-        return String(data: data, encoding: .utf8)
-    }
 }
 
 final class Network: NSObject, Repository {
@@ -84,9 +81,8 @@ final class Network: NSObject, Repository {
     /// means of this `shared` instance.
     static let shared: Network = Network()
     private override init() {
-        let dataManager = DataManager()
-        self.encoder = dataManager
-        self.decoder = dataManager
+        self.encoder = DataManager.default
+        self.decoder = DataManager.default
         super.init()
     }
     
@@ -121,12 +117,12 @@ final class Network: NSObject, Repository {
                 Logger.log(.info, message: "⬆️ Request to: \(url)\n\(inputDescription)")
             }
             
-            let httpRequest = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
+            var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
             httpRequest.httpMethod = String(describing: S.method)
             httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
             httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
             
-            let downloadTask = backgroundSession.downloadTask(with: httpRequest as URLRequest)
+            let downloadTask = backgroundSession.downloadTask(with: httpRequest)
             
             Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
                 defer { self?.remove(task: downloadTask) }
@@ -135,8 +131,10 @@ final class Network: NSObject, Repository {
                 if let error = error {
                     onCompletion(Result.failure(NetworkError.networkError(message: error.localizedDescription)))
                 } else {
-                    guard let data = data else {
-                        onCompletion(Result.failure(NetworkError.missingData)); return
+                    guard var data = data else { onCompletion(Result.failure(NetworkError.missingData)); return }
+                    
+                    if let securityManager = self.securityManager {
+                        data = securityManager.decrypt(data: data)
                     }
                     
                     if let outputDescription = String(data: data, encoding: .utf8) {
@@ -144,7 +142,7 @@ final class Network: NSObject, Repository {
                     }
                     
                     do {
-                        let response = try self.decoder.decode(S.Output.self, from: data)
+                        let response: Output = try self.decoder.decode(S.Output.self, from: data)
                         onCompletion(Result.success(response))
                     } catch {
                         onCompletion(Result.failure(NetworkError.decodingError(message: error.localizedDescription)))
@@ -164,8 +162,8 @@ final class Network: NSObject, Repository {
 extension Network {
     
     struct Constants {
-        static let sessionIdentifier = "Network.BackgroundSessionIdentifier"
-        static let timeoutInterval: TimeInterval = 20
+        static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
+        static let timeoutInterval: TimeInterval = 20.0
     }
 }
 
