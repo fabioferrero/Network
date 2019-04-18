@@ -43,22 +43,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B42C08BF20CD25EB00A39F69 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				E14D0519205D7CDF0094A002 /* Network.swift */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
-		B4E5F0B520CD7D0100D46099 /* Repository */ = {
-			isa = PBXGroup;
-			children = (
-				B4E5F0B820CD7D0100D46099 /* Repository.swift */,
-			);
-			path = Repository;
-			sourceTree = "<group>";
-		};
 		E168D0262045C2AC00F8C79F = {
 			isa = PBXGroup;
 			children = (
@@ -79,8 +63,8 @@
 			isa = PBXGroup;
 			children = (
 				E168D0322045C2AC00F8C79F /* AppDelegate.swift */,
-				B4E5F0B520CD7D0100D46099 /* Repository */,
-				B42C08BF20CD25EB00A39F69 /* Network */,
+				B4E5F0B820CD7D0100D46099 /* Repository.swift */,
+				E14D0519205D7CDF0094A002 /* Network.swift */,
 				E168D0342045C2AC00F8C79F /* ViewController.swift */,
 				B42C08BB20CD1F2000A39F69 /* Environment.swift */,
 				B42C08BC20CD1F2000A39F69 /* Logger.swift */,
