@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
-		B42C08C120CD271300A39F69 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08C020CD271300A39F69 /* NetworkError.swift */; };
 		B4E5F0BA20CD7D0100D46099 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E5F0B820CD7D0100D46099 /* Repository.swift */; };
 		E14D051A205D7CDF0094A002 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0519205D7CDF0094A002 /* Network.swift */; };
 		E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0322045C2AC00F8C79F /* AppDelegate.swift */; };
@@ -22,7 +21,6 @@
 /* Begin PBXFileReference section */
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		B42C08C020CD271300A39F69 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		B4E5F0B820CD7D0100D46099 /* Repository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		E14D0519205D7CDF0094A002 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		E168D02F2045C2AC00F8C79F /* Network.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Network.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,7 +47,6 @@
 			isa = PBXGroup;
 			children = (
 				E14D0519205D7CDF0094A002 /* Network.swift */,
-				B42C08C020CD271300A39F69 /* NetworkError.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -171,7 +168,6 @@
 				B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */,
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
-				B42C08C120CD271300A39F69 /* NetworkError.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
 				E14D051A205D7CDF0094A002 /* Network.swift in Sources */,
 				B4E5F0BA20CD7D0100D46099 /* Repository.swift in Sources */,

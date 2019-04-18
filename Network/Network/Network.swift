@@ -96,18 +96,18 @@ final class Network: NSObject, Repository {
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }()
     
-    private typealias HTTPResponse = (data: Data?, urlResponse: URLResponse?, error: Error?)
-    private typealias CompletionHandler = (_ data: Data?, _ urlResponse: URLResponse?, _ error: Error?) -> Void
+    private typealias HTTPResponse = (data: Data?, urlResponse: URLResponse?, error: Swift.Error?)
+    private typealias CompletionHandler = (_ data: Data?, _ urlResponse: URLResponse?, _ error: Swift.Error?) -> Void
     
     // MARK: HTTP Response
     private var httpResponses: [URLSessionTask: HTTPResponse] = [:]
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
-    func callService<S: Service, Input, Output>(_ service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Error>) -> Void) where Input == S.Input, Output == S.Output {
+    func callService<S: Service, Input, Output>(_ service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         guard let url = URL(string: S.url) else {
-            onCompletion(Result.failure(NetworkError.invalidURL)); return
+            onCompletion(Result.failure(Error.invalidURL)); return
         }
         
         do {
@@ -129,9 +129,9 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(NetworkError.networkError(message: error.localizedDescription)))
+                    onCompletion(Result.failure(Error.networkError(message: error.localizedDescription)))
                 } else {
-                    guard var data = data else { onCompletion(Result.failure(NetworkError.missingData)); return }
+                    guard var data = data else { onCompletion(Result.failure(Error.missingData)); return }
                     
                     if let securityManager = self.securityManager {
                         data = securityManager.decrypt(data: data)
@@ -145,14 +145,37 @@ final class Network: NSObject, Repository {
                         let response: Output = try self.decoder.decode(S.Output.self, from: data)
                         onCompletion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(NetworkError.decodingError(message: error.localizedDescription)))
+                        onCompletion(Result.failure(Error.decodingError(message: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(NetworkError.encodingError(message: error.localizedDescription)))
+            onCompletion(Result.failure(Error.encodingError(message: error.localizedDescription)))
+        }
+    }
+}
+
+// MARK: - Errors
+
+extension Network {
+    
+    enum Error: Swift.Error {
+        case invalidURL
+        case missingData
+        case encodingError(message: String)
+        case decodingError(message: String)
+        case networkError(message: String)
+        
+        var localizedDescription: String {
+            switch self {
+            case .invalidURL: return "Invalid URL in request: cannot create URL from String."
+            case .missingData: return "Missing data in response."
+            case .encodingError(let errorMessage): return "Error during payload encoding: \(errorMessage)"
+            case .decodingError(let errorMessage): return "Error during data decoding: \(errorMessage)"
+            case .networkError(let errorMessage): return errorMessage
+            }
         }
     }
 }
@@ -202,7 +225,7 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
     
     // This delegate method is called when session task is finished. Check for
     // presence of `error` object to decide if call was successful or not
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Swift.Error?) {
         if let error = error {
             httpResponses[task]?.error = error
         } else if let data = dataBuffers[task] {
