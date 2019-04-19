@@ -75,7 +75,7 @@ fileprivate struct DataManager: DataEncoder, DataDecoder {
     }
 }
 
-final class Network: NSObject, Repository {
+final class Network: NSObject {
     
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
@@ -159,10 +159,6 @@ final class Network: NSObject, Repository {
         } catch {
             completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
         }
-    }
-    
-    func call<S: Service, Input, Output>(service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
-        self.call(service: service, input: input, onBackgroundQueue: false, onCompletion: onCompletion)
     }
 }
 

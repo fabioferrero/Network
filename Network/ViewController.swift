@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var errorSwitch: UISwitch!
     var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
-    var repo: Repository = Network.shared
+    var network: Network = Network.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +69,7 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        repo.call(service: ErrorService(), input: ErrorService.Input()) { result in
+        network.call(service: ErrorService(), input: ErrorService.Input()) { result in
             switch result {
             case .success:
                 let alert = Alert(title: "Success", message: "It was actually a real success.")
@@ -86,7 +86,7 @@ class ViewController: UIViewController {
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
         loader.startAnimating()
-        repo.call(service: CreateNewPost(), input: newPost) { [weak self] result in
+        network.call(service: CreateNewPost(), input: newPost) { [weak self] result in
             guard let self = self else { return }
             self.loader.stopAnimating()
             switch result {
@@ -99,7 +99,7 @@ class ViewController: UIViewController {
             }
         }
         let backgroundPost = NewPost(userId: 0, title: "Background!", body: "Super cool")
-        repo.call(service: CreateNewPost(), input: backgroundPost, onBackgroundQueue: true) { result in
+        network.call(service: CreateNewPost(), input: backgroundPost, onQueue: .background) { result in
             switch result {
             case .success(let backgroundPost):
                 self.backgroundPost = backgroundPost
