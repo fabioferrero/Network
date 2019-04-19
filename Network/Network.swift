@@ -16,101 +16,16 @@ protocol Service {
     static var path: String { get }
 }
 
-enum HTTPMethod: String {
-    case get
-    case post
-    case put
-    case delete
-    case patch
-}
-
-enum HTTPStatusCode: Int {
-    case ok                     = 200
-    case created                = 201
-    case accepted               = 202
-    case noContent              = 204
-    case movedPermanently       = 301
-    case found                  = 302
-    case seeOther               = 303
-    case notModified            = 304
-    case temporaryRedirect      = 307
-    case badRequest             = 400
-    case unauthorized           = 401
-    case forbidden              = 403
-    case notFound               = 404
-    case methodNotAllowed       = 405
-    case notAcceptable          = 406
-    case preconditionFailed     = 412
-    case unsupportedMedia       = 415
-    case internalServerError    = 500
-    case notImplemented         = 501
-}
-
-extension HTTPMethod: CustomStringConvertible {
-    var description: String {
-        return self.rawValue.uppercased()
-    }
-}
-
-protocol SecurityManager {
-    func encrypt(data: Data) -> Data
-    func decrypt(data: Data) -> Data
-}
-
-protocol DataEncoder {
-    func encode<Input: Encodable>(_ value: Input) throws -> Data
-    func string<Input: Encodable>(for value: Input) -> String?
-}
-
-extension DataEncoder {
-    func string<Input>(for value: Input) -> String? where Input : Encodable {
-        guard let data: Data = try? self.encode(value) else { return nil }
-        return String(data: data, encoding: .utf8)
-    }
-}
-
-protocol DataDecoder {
-    func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output
-}
-
-fileprivate struct DataManager: DataEncoder, DataDecoder {
-    
-    static var `default`: DataManager = DataManager()
-    
-    private var encoder: JSONEncoder
-    private var decoder: JSONDecoder
-    
-    private init() {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
-        
-        self.encoder = encoder
-        self.decoder = JSONDecoder()
-    }
-    
-    func encode<Input: Encodable>(_ value: Input) throws -> Data {
-        return try encoder.encode(value)
-    }
-    
-    func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output {
-        return try decoder.decode(type, from: data)
-    }
-}
-
 final class Network: NSObject {
     
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
     static let shared: Network = Network()
-    private override init() {
-        self.encoder = DataManager.default
-        self.decoder = DataManager.default
-        super.init()
-    }
+    private override init() { super.init() }
     
     var securityManager: SecurityManager?
-    var encoder: DataEncoder
-    var decoder: DataDecoder
+    var encoder: DataEncoder = DataManager.default
+    var decoder: DataDecoder = DataManager.default
     
     // MARK: Session
     private lazy var backgroundSession: URLSession = {
@@ -187,10 +102,7 @@ final class Network: NSObject {
     }
 }
 
-// MARK: - Errors
-
 extension Network {
-    
     enum Error: Swift.Error {
         case invalidURL
         case missingData
@@ -210,18 +122,6 @@ extension Network {
     }
 }
 
-// MARK - Constants
-
-extension Network {
-    
-    struct Constants {
-        static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
-        static let timeoutInterval: TimeInterval = 20.0
-    }
-}
-
-// MARK: - Privates
-
 extension Network {
     
     private func add(task: URLSessionTask, withRelatedCompletionHandler completion: @escaping CompletionHandler) {
@@ -237,7 +137,15 @@ extension Network {
     }
 }
 
-// MARK: - Session Delegate
+private extension Network {
+    #warning("TODO: Create a configuration instead of Constants")
+    struct Constants {
+        static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
+        static let timeoutInterval: TimeInterval = 20.0
+    }
+}
+
+// MARK: - Session Delegates
 
 extension Network: URLSessionDelegate {
     // This delegate method is needed in order to reactivate the backgroud
@@ -296,5 +204,32 @@ extension Network: URLSessionDownloadDelegate {
         } catch {
             Logger.log(.error, message: error.localizedDescription)
         }
+    }
+}
+
+// MARK: - DataManager
+
+/// The standard `DataEncoder` and `DataDecoder` for the Network singleton
+fileprivate struct DataManager: DataEncoder, DataDecoder {
+    
+    static var `default`: DataManager = DataManager()
+    
+    private var encoder: JSONEncoder
+    private var decoder: JSONDecoder
+    
+    private init() {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
+        
+        self.encoder = encoder
+        self.decoder = JSONDecoder()
+    }
+    
+    func encode<Input: Encodable>(_ value: Input) throws -> Data {
+        return try encoder.encode(value)
+    }
+    
+    func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output {
+        return try decoder.decode(type, from: data)
     }
 }
