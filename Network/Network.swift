@@ -56,9 +56,9 @@ final class Network: NSObject {
         }
         
         do {
-            let data = try encoder.encode(input)
+            let data: Data = try encoder.encode(input)
             
-            if let inputDescription = encoder.string(for: input) {
+            if let inputDescription: String = encoder.string(for: input) {
                 Logger.log(.info, message: "⬆️ Request to: \(url)\n\(inputDescription)")
             }
             
@@ -67,7 +67,7 @@ final class Network: NSObject {
             httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
             httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
             
-            let downloadTask = backgroundSession.downloadTask(with: httpRequest)
+            let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
             
             Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
                 defer { self?.remove(task: downloadTask) }
@@ -76,9 +76,9 @@ final class Network: NSObject {
                 if let error = error {
                     completion(Result.failure(Error.networkError(message: error.localizedDescription)))
                 } else {
-                    guard var data = data else { completion(Result.failure(Error.missingData)); return }
+                    guard var data: Data = data else { completion(Result.failure(Error.missingData)); return }
                     
-                    if let securityManager = self.securityManager {
+                    if let securityManager: SecurityManager = self.securityManager {
                         data = securityManager.decrypt(data: data)
                     }
                     
