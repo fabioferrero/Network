@@ -42,4 +42,28 @@ enum HTTPStatusCode: Int {
     case unsupportedMedia       = 415
     case internalServerError    = 500
     case notImplemented         = 501
+    
+    var code: Int {
+        switch self {
+        case .ok:                   return 200
+        case .created:              return 201
+        case .accepted:             return 202
+        case .noContent:            return 204
+        case .movedPermanently:     return 301
+        case .found:                return 302
+        case .seeOther:             return 303
+        case .notModified:          return 304
+        case .temporaryRedirect:    return 307
+        case .badRequest:           return 400
+        case .unauthorized:         return 401
+        case .forbidden:            return 403
+        case .notFound:             return 404
+        case .methodNotAllowed:     return 405
+        case .notAcceptable:        return 406
+        case .preconditionFailed:   return 412
+        case .unsupportedMedia:     return 415
+        case .internalServerError:  return 500
+        case .notImplemented:       return 501
+        }
+    }
 }
