@@ -219,8 +219,7 @@ extension Network {
 
 // MARK: - Session Delegate
 
-extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
-    
+extension Network: URLSessionDelegate {
     // This delegate method is needed in order to reactivate the backgroud
     // session when the app is not in foreground
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
@@ -232,7 +231,9 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
             }
         }
     }
-    
+}
+
+extension Network: URLSessionDataDelegate {
     // This delegate method is called when session task is finished. Check for
     // presence of `error` object to decide if call was successful or not
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Swift.Error?) {
@@ -262,7 +263,9 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         dataBuffers[dataTask]?.append(data)
     }
-    
+}
+
+extension Network: URLSessionDownloadDelegate {
     // This delegate method id called when the `dowloadTask` has finished its
     // work of downloading. It wrote in `location` all dowloaded data.
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
