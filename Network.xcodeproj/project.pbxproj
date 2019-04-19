@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
+		B4A6D1EF2269F9FD005B66BC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B4A6D1EE2269F9FD005B66BC /* README.md */; };
 		E14D051A205D7CDF0094A002 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0519205D7CDF0094A002 /* Network.swift */; };
 		E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0322045C2AC00F8C79F /* AppDelegate.swift */; };
 		E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0342045C2AC00F8C79F /* ViewController.swift */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		B4A6D1EE2269F9FD005B66BC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E14D0519205D7CDF0094A002 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		E168D02F2045C2AC00F8C79F /* Network.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Network.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E168D0322045C2AC00F8C79F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -44,6 +46,7 @@
 		E168D0262045C2AC00F8C79F = {
 			isa = PBXGroup;
 			children = (
+				B4A6D1EE2269F9FD005B66BC /* README.md */,
 				E168D0312045C2AC00F8C79F /* Network */,
 				E168D0302045C2AC00F8C79F /* Products */,
 			);
@@ -135,6 +138,7 @@
 			files = (
 				E168D03D2045C2AC00F8C79F /* LaunchScreen.storyboard in Resources */,
 				E168D03A2045C2AC00F8C79F /* Assets.xcassets in Resources */,
+				B4A6D1EF2269F9FD005B66BC /* README.md in Resources */,
 				E168D0382045C2AC00F8C79F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
