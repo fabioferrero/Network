@@ -93,7 +93,8 @@ final class Network: NSObject {
     // MARK: Session
     private lazy var backgroundSession: URLSession = {
         let configuration: URLSessionConfiguration = .background(withIdentifier: Constants.sessionIdentifier)
-        return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        return urlSession
     }()
     
     private typealias HTTPResponse = (data: Data?, urlResponse: URLResponse?, error: Swift.Error?)
@@ -104,12 +105,9 @@ final class Network: NSObject {
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
-    enum Queue {
-        case main
-        case background
-    }
+    enum Queue { case main; case background }
     
-    func call<S: Service, Input, Output>(service: S, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+    func call<S: Service, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         func completion(_ response: Result<Output, Swift.Error>) {
             if responseQueue == Queue.main { DispatchQueue.main.async { onCompletion(response) } }
@@ -246,7 +244,8 @@ extension Network: URLSessionDataDelegate {
             dataBuffers[task] = nil // Clean the buffer
         }
         if let httpResponse = self.httpResponses[task] {
-            self.completionHandlers[task]?(httpResponse.data, httpResponse.urlResponse, httpResponse.error)
+            let urlResponse: URLResponse? = httpResponse.urlResponse ?? task.response
+            self.completionHandlers[task]?(httpResponse.data, urlResponse, httpResponse.error)
         }
     }
     
