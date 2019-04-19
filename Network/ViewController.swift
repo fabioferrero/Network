@@ -11,6 +11,18 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var errorSwitch: UISwitch!
+    var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
+    var repo: Repository = Network.shared
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        loader.hidesWhenStopped = true
+        view.addSubview(loader)
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        loader.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        loader.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 100).isActive = true
+    }
     
     struct Post: Decodable {
         var userId: Int
@@ -35,7 +47,7 @@ class ViewController: UIViewController {
     // conforming to the `Encodable` and `Decodable` protocols.
     struct CreateNewPost: Service {
         static var method: HTTPMethod = .post
-        static var url: String = "https://jsonplaceholder.typicode.com/posts"
+        static var path: String = "https://jsonplaceholder.typicode.com/posts"
         
         typealias Input = NewPost
         typealias Output = Post
@@ -43,7 +55,7 @@ class ViewController: UIViewController {
     
     struct ErrorService: Service {
         static var method: HTTPMethod = .post
-        static var url: String = "https://fakeservice.error/"
+        static var path: String = "https://fakeservice.error/"
         struct Input: Encodable {};
         struct Output: Decodable {};
     }
@@ -57,7 +69,7 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        Network.shared.callService(ErrorService(), input: ErrorService.Input()) { result in
+        repo.call(service: ErrorService(), input: ErrorService.Input()) { result in
             switch result {
             case .success:
                 let alert = Alert(title: "Success", message: "It was actually a real success.")
@@ -69,13 +81,28 @@ class ViewController: UIViewController {
         }
     }
     
+    private var backgroundPost: Post?
+    
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
-        Network.shared.callService(CreateNewPost(), input: newPost) { result in
+        loader.startAnimating()
+        repo.call(service: CreateNewPost(), input: newPost) { [weak self] result in
+            guard let self = self else { return }
+            self.loader.stopAnimating()
             switch result {
             case .success(let thePostThatYouWereWaitingFor):
                 self.use(thePostThatYouWereWaitingFor)
                 thePostThatYouWereWaitingFor.foo()
+            case .failure(let error):
+                let alert = Alert(title: "Error", message: error.localizedDescription)
+                alert.show(from: self)
+            }
+        }
+        let backgroundPost = NewPost(userId: 0, title: "Background!", body: "Super cool")
+        repo.call(service: CreateNewPost(), input: backgroundPost, onBackgroundQueue: true) { result in
+            switch result {
+            case .success(let backgroundPost):
+                self.backgroundPost = backgroundPost
             case .failure(let error):
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)

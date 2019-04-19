@@ -13,7 +13,7 @@ protocol Service {
     associatedtype Output: Decodable
     
     static var method: HTTPMethod { get }
-    static var url: String { get }
+    static var path: String { get }
 }
 
 enum HTTPMethod: String {
@@ -104,10 +104,15 @@ final class Network: NSObject, Repository {
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
-    func callService<S: Service, Input, Output>(_ service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+    func call<S: Service, Input, Output>(service: S, input: Input, onBackgroundQueue: Bool, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
-        guard let url = URL(string: S.url) else {
-            onCompletion(Result.failure(Error.invalidURL)); return
+        func completion(_ response: Result<Output, Swift.Error>) {
+            if onBackgroundQueue { onCompletion(response) }
+            else { DispatchQueue.main.async { onCompletion(response) } }
+        }
+        
+        guard let url = URL(string: S.path) else {
+            completion(Result.failure(Error.invalidURL)); return
         }
         
         do {
@@ -129,9 +134,9 @@ final class Network: NSObject, Repository {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    onCompletion(Result.failure(Error.networkError(message: error.localizedDescription)))
+                    completion(Result.failure(Error.networkError(message: error.localizedDescription)))
                 } else {
-                    guard var data = data else { onCompletion(Result.failure(Error.missingData)); return }
+                    guard var data = data else { completion(Result.failure(Error.missingData)); return }
                     
                     if let securityManager = self.securityManager {
                         data = securityManager.decrypt(data: data)
@@ -143,17 +148,21 @@ final class Network: NSObject, Repository {
                     
                     do {
                         let response: Output = try self.decoder.decode(S.Output.self, from: data)
-                        onCompletion(Result.success(response))
+                        completion(Result.success(response))
                     } catch {
-                        onCompletion(Result.failure(Error.decodingError(message: error.localizedDescription)))
+                        completion(Result.failure(Error.decodingError(message: error.localizedDescription)))
                     }
                 }
             })
             
             downloadTask.resume()
         } catch {
-            onCompletion(Result.failure(Error.encodingError(message: error.localizedDescription)))
+            completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
         }
+    }
+    
+    func call<S: Service, Input, Output>(service: S, input: Input, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+        self.call(service: service, input: input, onBackgroundQueue: false, onCompletion: onCompletion)
     }
 }
 
@@ -234,10 +243,8 @@ extension Network: URLSessionDelegate, URLSessionDataDelegate, URLSessionDownloa
             }
             dataBuffers[task] = nil // Clean the buffer
         }
-        DispatchQueue.main.async {
-            if let httpResponse = self.httpResponses[task] {
-                self.completionHandlers[task]?(httpResponse.data, httpResponse.urlResponse, httpResponse.error)
-            }
+        if let httpResponse = self.httpResponses[task] {
+            self.completionHandlers[task]?(httpResponse.data, httpResponse.urlResponse, httpResponse.error)
         }
     }
     
