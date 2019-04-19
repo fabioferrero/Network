@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol Service {
+protocol DataService {
     associatedtype Input: Encodable
     associatedtype Output: Decodable
     
@@ -27,7 +27,6 @@ final class Network: NSObject {
     var encoder: DataEncoder = DataManager.default
     var decoder: DataDecoder = DataManager.default
     
-    // MARK: Session
     private lazy var backgroundSession: URLSession = {
         let configuration: URLSessionConfiguration = .background(withIdentifier: Constants.sessionIdentifier)
         let urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
@@ -42,9 +41,11 @@ final class Network: NSObject {
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
+    // MARK: Network call
+    
     enum Queue { case main; case background }
     
-    func call<S: Service, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+    func call<S: DataService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         func completion(_ response: Result<Output, Swift.Error>) {
             if responseQueue == Queue.main { DispatchQueue.main.async { onCompletion(response) } }
@@ -206,8 +207,6 @@ extension Network: URLSessionDownloadDelegate {
         }
     }
 }
-
-// MARK: - DataManager
 
 /// The standard `DataEncoder` and `DataDecoder` for the Network singleton
 fileprivate struct DataManager: DataEncoder, DataDecoder {

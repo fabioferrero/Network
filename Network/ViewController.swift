@@ -24,42 +24,6 @@ class ViewController: UIViewController {
         loader.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 100).isActive = true
     }
     
-    struct Post: Decodable {
-        var userId: Int
-        var id: Int
-        var title: String
-        var body: String
-        
-        func foo() {
-            Logger.log(.verbose, message: "foo on \(String(describing: self))! foo!")
-        }
-    }
-    
-    struct NewPost: Encodable {
-        var userId: Int
-        var title: String
-        var body: String
-    }
-    
-    // I define my custom service as a struct or class conforming to the Service
-    // protocol, so that it contains the proper service `url` and define the
-    // corresponding `Input` and `Output` types, that must be, in order,
-    // conforming to the `Encodable` and `Decodable` protocols.
-    struct CreateNewPost: Service {
-        static var method: HTTPMethod = .post
-        static var path: String = "https://jsonplaceholder.typicode.com/posts"
-        
-        typealias Input = NewPost
-        typealias Output = Post
-    }
-    
-    struct ErrorService: Service {
-        static var method: HTTPMethod = .post
-        static var path: String = "https://fakeservice.error/"
-        struct Input: Encodable {};
-        struct Output: Decodable {};
-    }
-    
     @IBAction func callButtonTapped() {
         if errorSwitch.isOn {
             callErrorService()
@@ -69,7 +33,7 @@ class ViewController: UIViewController {
     }
     
     func callErrorService() {
-        network.call(service: ErrorService.self, input: ErrorService.Input()) { result in
+        network.call(service: Services.errorService, input: ErrorService.Input()) { result in
             switch result {
             case .success:
                 let alert = Alert(title: "Success", message: "It was actually a real success.")
@@ -86,7 +50,7 @@ class ViewController: UIViewController {
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
         loader.startAnimating()
-        network.call(service: CreateNewPost.self, input: newPost) { [weak self] result in
+        network.call(service: Services.createNewPost, input: newPost) { [weak self] result in
             guard let self = self else { return }
             self.loader.stopAnimating()
             switch result {
