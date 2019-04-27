@@ -101,6 +101,54 @@ final class Network: NSObject {
             completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
         }
     }
+    
+    func request<S: DataService>(service: S.Type, input: S.Input) -> Future<Data> {
+        
+        let promise = Promise<Data>()
+        
+        guard let url = URL(string: S.path) else {
+            promise.reject(with: Error.invalidURL); return promise
+        }
+        
+        do {
+            let data: Data = try encoder.encode(input)
+            
+            if let inputDescription: String = encoder.string(for: input) {
+                Logger.log(.info, message: "⬆️ Request to: \(url)\n\(inputDescription)")
+            }
+            
+            var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
+            httpRequest.httpMethod = String(describing: S.method)
+            httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
+            httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
+            
+            let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
+            
+            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
+                defer { self?.remove(task: downloadTask) }
+                
+                if let error = error {
+                    promise.reject(with: Error.networkError(message: error.localizedDescription))
+                } else {
+                    if let data = data {
+                        promise.resolve(with: data)
+                    } else {
+                        promise.reject(with: Error.missingData)
+                    }
+                }
+            })
+            
+            downloadTask.resume()
+        } catch {
+            promise.reject(with: Error.encodingError(message: error.localizedDescription))
+        }
+        
+        return promise
+    }
+    
+    func callFuture<S: DataService>(service: S.Type, input: S.Input) -> Future<S.Output> {
+        return request(service: service, input: input).decoded()
+    }
 }
 
 extension Network {

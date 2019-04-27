@@ -1,5 +1,5 @@
 //
-//  Future&Promise.swift
+//  Future.swift
 //  Network
 //
 //  Created by Fabio Ferrero on 27/04/2019.
@@ -35,7 +35,7 @@ class Promise<Value>: Future<Value> {
         super.init()
         
         // If a value is already given in input, we can report the value directly
-        result = value.map(Result.success)
+        result = value.map { value in Result.success(value) }
     }
     
     func resolve(with value: Value) {
