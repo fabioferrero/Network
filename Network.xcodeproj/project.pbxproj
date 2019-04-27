@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B41115962274992500192AF2 /* FutureChained.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41115952274992500192AF2 /* FutureChained.swift */; };
+		B41115982274994500192AF2 /* FutureTransformed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41115972274994500192AF2 /* FutureTransformed.swift */; };
+		B411159A2274996300192AF2 /* FutureDecoded.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41115992274996300192AF2 /* FutureDecoded.swift */; };
+		B411159C2274997E00192AF2 /* FutureSaved.swift in Sources */ = {isa = PBXBuildFile; fileRef = B411159B2274997E00192AF2 /* FutureSaved.swift */; };
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
-		B4795C24227489C400C534E1 /* Future&Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4795C23227489C400C534E1 /* Future&Promise.swift */; };
+		B4795C24227489C400C534E1 /* Future.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4795C23227489C400C534E1 /* Future.swift */; };
 		B4A6D1EF2269F9FD005B66BC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B4A6D1EE2269F9FD005B66BC /* README.md */; };
 		B4A6D1F12269FC26005B66BC /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F02269FC26005B66BC /* SecurityManager.swift */; };
 		B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */; };
@@ -24,9 +28,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B41115952274992500192AF2 /* FutureChained.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureChained.swift; sourceTree = "<group>"; };
+		B41115972274994500192AF2 /* FutureTransformed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureTransformed.swift; sourceTree = "<group>"; };
+		B41115992274996300192AF2 /* FutureDecoded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureDecoded.swift; sourceTree = "<group>"; };
+		B411159B2274997E00192AF2 /* FutureSaved.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureSaved.swift; sourceTree = "<group>"; };
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		B4795C23227489C400C534E1 /* Future&Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Future&Promise.swift"; sourceTree = "<group>"; };
+		B4795C23227489C400C534E1 /* Future.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Future.swift; sourceTree = "<group>"; };
 		B4A6D1EE2269F9FD005B66BC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B4A6D1F02269FC26005B66BC /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encoder&Decoder.swift"; sourceTree = "<group>"; };
@@ -53,6 +61,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B41115942274991100192AF2 /* Future */ = {
+			isa = PBXGroup;
+			children = (
+				B4795C23227489C400C534E1 /* Future.swift */,
+				B41115952274992500192AF2 /* FutureChained.swift */,
+				B41115972274994500192AF2 /* FutureTransformed.swift */,
+				B41115992274996300192AF2 /* FutureDecoded.swift */,
+				B411159B2274997E00192AF2 /* FutureSaved.swift */,
+			);
+			path = Future;
+			sourceTree = "<group>";
+		};
 		E168D0262045C2AC00F8C79F = {
 			isa = PBXGroup;
 			children = (
@@ -74,7 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				E168D0322045C2AC00F8C79F /* AppDelegate.swift */,
-				B4795C23227489C400C534E1 /* Future&Promise.swift */,
+				B41115942274991100192AF2 /* Future */,
 				E14D0519205D7CDF0094A002 /* Network.swift */,
 				B4A6D1F6226A03A2005B66BC /* Services.swift */,
 				B4A6D1F02269FC26005B66BC /* SecurityManager.swift */,
@@ -168,12 +188,16 @@
 				B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */,
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
-				B4795C24227489C400C534E1 /* Future&Promise.swift in Sources */,
+				B4795C24227489C400C534E1 /* Future.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
 				B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */,
 				B4A6D1F52269FCEF005B66BC /* HTTP.swift in Sources */,
 				E14D051A205D7CDF0094A002 /* Network.swift in Sources */,
+				B411159A2274996300192AF2 /* FutureDecoded.swift in Sources */,
+				B41115962274992500192AF2 /* FutureChained.swift in Sources */,
+				B411159C2274997E00192AF2 /* FutureSaved.swift in Sources */,
 				B4A6D1F7226A03A2005B66BC /* Services.swift in Sources */,
+				B41115982274994500192AF2 /* FutureTransformed.swift in Sources */,
 				B4A6D1F12269FC26005B66BC /* SecurityManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
