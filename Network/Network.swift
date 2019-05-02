@@ -9,11 +9,13 @@
 import UIKit
 
 protocol DataService {
-    associatedtype Input: Encodable
     associatedtype Output: Decodable
-    
-    static var method: HTTPMethod { get }
     static var path: String { get }
+}
+
+protocol IOService: DataService {
+    associatedtype Input: Encodable
+    static var method: HTTPMethod { get }
 }
 
 final class Network: NSObject {
@@ -45,7 +47,7 @@ final class Network: NSObject {
     
     enum Queue { case main; case background }
     
-    func call<S: DataService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+    func call<S: IOService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         func completion(_ response: Result<Output, Swift.Error>) {
             if responseQueue == Queue.main { DispatchQueue.main.async { onCompletion(response) } }
@@ -102,7 +104,7 @@ final class Network: NSObject {
         }
     }
     
-    func request<S: DataService>(service: S.Type, input: S.Input) -> Future<Data> {
+    func request<S: IOService>(service: S.Type, input: S.Input) -> Future<Data> {
         
         let promise = Promise<Data>()
         
@@ -146,7 +148,7 @@ final class Network: NSObject {
         return promise
     }
     
-    func callFuture<S: DataService>(service: S.Type, input: S.Input) -> Future<S.Output> {
+    func callFuture<S: IOService>(service: S.Type, input: S.Input) -> Future<S.Output> {
         return request(service: service, input: input).decoded()
     }
 }

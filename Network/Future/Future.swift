@@ -9,23 +9,63 @@
 import Foundation
 
 class Future<Value> {
-    fileprivate var result: Result<Value, Error>? {
-        // Observe result assigning and report it
+    fileprivate var result: Result<Value, Swift.Error>? {
+        // Observe result assignment and report it
         didSet { result.map(report) }
     }
     
-    private lazy var callbacks = [(Result<Value, Error>) -> Void]()
+    private typealias Callback = (Result<Value, Swift.Error>) -> Void
+    private typealias SuccessCallback = (Value) -> Void
+    private typealias FailureCallback = (Swift.Error) -> Void
     
-    func observe(with callback: @escaping (Result<Value, Error>) -> Void) {
+    private lazy var callbacks = [Callback]()
+    private lazy var onSuccessCallbacks = [SuccessCallback]()
+    private lazy var onFailureCallbacks = [FailureCallback]()
+    
+    func observe(with callback: @escaping (Result<Value, Swift.Error>) -> Void) {
         callbacks.append(callback)
         
         // If a result has already been set, call the callback directly
         result.map(callback)
     }
     
-    private func report(result: Result<Value, Error>) {
+    @discardableResult
+    func onSuccess(do callback: @escaping (Value) -> Void) -> Future<Value> {
+        onSuccessCallbacks.append(callback)
+        
+        // If a result has already been set, call the success callback directly
+        // only if the result is a success
+        result.map { result in
+            if case Result.success(let value) = result { callback(value) }
+        }
+        return self
+    }
+    
+    @discardableResult
+    func onFailure(do callback: @escaping (Swift.Error) -> Void) -> Future<Value> {
+        onFailureCallbacks.append(callback)
+        
+        // If a result has already been set, call the failure callback directly
+        // only if the result is a failure
+        result.map { result in
+            if case Result.failure(let error) = result { callback(error) }
+        }
+        return self
+    }
+    
+    private func report(result: Result<Value, Swift.Error>) {
         for callback in callbacks {
-            callback(result)
+            DispatchQueue.main.async { callback(result) }
+        }
+        if case Result.success(let value) = result {
+            onSuccessCallbacks.forEach { callback in
+                DispatchQueue.main.async { callback(value) }
+            }
+        }
+        if case Result.failure(let error) = result {
+            onFailureCallbacks.forEach { callback in
+                DispatchQueue.main.async { callback(error) }
+            }
         }
     }
 }
@@ -42,7 +82,7 @@ class Promise<Value>: Future<Value> {
         result = .success(value)
     }
     
-    func reject(with error: Error) {
+    func reject(with error: Swift.Error) {
         result = .failure(error)
     }
 }

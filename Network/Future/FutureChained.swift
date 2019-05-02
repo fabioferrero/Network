@@ -44,3 +44,12 @@ extension Future {
         return promise
     }
 }
+
+extension Future {
+    func applying(action: @escaping (Value) throws -> Void) -> Future<Value> {
+        return chained { value in
+            try action(value)
+            return self
+        }
+    }
+}
