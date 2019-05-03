@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Future {
+public extension Future {
     func transformed<NewValue>(with closure: @escaping (Value) throws -> NewValue) -> Future<NewValue> {
         return chained { value in
             return try Promise(value: closure(value))

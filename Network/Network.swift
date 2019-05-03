@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FutureKit
 
 protocol DataService {
     associatedtype Output: Decodable

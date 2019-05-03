@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Future where Value == Data {
+public extension Future where Value == Data {
     func decoded<NewValue: Decodable>(to type: NewValue.Type = NewValue.self) -> Future<NewValue> {
         return transformed { value in
             return try JSONDecoder().decode(type, from: value)

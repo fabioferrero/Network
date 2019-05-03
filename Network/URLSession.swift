@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FutureKit
 
 extension URLSession {
     func request<Service: DataService>(for service: Service) -> Future<Data> {

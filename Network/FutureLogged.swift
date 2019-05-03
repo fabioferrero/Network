@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FutureKit
 
 extension Future where Value == Data {
     func logged(with message: String? = nil) -> Future<Value> {

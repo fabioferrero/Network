@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Future<Value> {
+public class Future<Value> {
     fileprivate var result: Result<Value, Swift.Error>? {
         // Observe result assignment and report it
         didSet { result.map(report) }
@@ -22,9 +22,9 @@ class Future<Value> {
     private lazy var onSuccessCallbacks = [(Queue, SuccessCallback)]()
     private lazy var onFailureCallbacks = [(Queue, FailureCallback)]()
     
-    enum Queue { case main; case background }
+    public enum Queue { case main; case background }
     
-    func observe(on queue: Queue = .main, with callback: @escaping (Result<Value, Swift.Error>) -> Void) {
+    public func observe(on queue: Queue = .main, with callback: @escaping (Result<Value, Swift.Error>) -> Void) {
         callbacks.append((queue, callback))
         
         // If a result has already been set, call the callback directly
@@ -37,7 +37,7 @@ class Future<Value> {
     }
     
     @discardableResult
-    func onSuccess(on queue: Queue = .main, do callback: @escaping (Value) -> Void) -> Future<Value> {
+    public func onSuccess(on queue: Queue = .main, do callback: @escaping (Value) -> Void) -> Future<Value> {
         onSuccessCallbacks.append((queue, callback))
         
         // If a result has already been set, call the success callback directly
@@ -54,7 +54,7 @@ class Future<Value> {
     }
     
     @discardableResult
-    func onFailure(on queue: Queue = .main, do callback: @escaping (Swift.Error) -> Void) -> Future<Value> {
+    public func onFailure(on queue: Queue = .main, do callback: @escaping (Swift.Error) -> Void) -> Future<Value> {
         onFailureCallbacks.append((queue, callback))
         
         // If a result has already been set, call the failure callback directly
@@ -96,19 +96,19 @@ class Future<Value> {
     }
 }
 
-class Promise<Value>: Future<Value> {
-    init(value: Value? = nil) {
+public class Promise<Value>: Future<Value> {
+    public init(value: Value? = nil) {
         super.init()
         
         // If a value is already given in input, we can report the value directly
         result = value.map { value in Result.success(value) }
     }
     
-    func resolve(with value: Value) {
+    public func resolve(with value: Value) {
         result = .success(value)
     }
     
-    func reject(with error: Swift.Error) {
+    public func reject(with error: Swift.Error) {
         result = .failure(error)
     }
 }

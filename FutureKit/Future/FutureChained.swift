@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Future {
+public extension Future {
     func chained<NextValue>(with closure: @escaping (Value) throws -> Future<NextValue>) -> Future<NextValue> {
         
         // Create a wrapper Promise that will be returned by this method
@@ -45,7 +45,7 @@ extension Future {
     }
 }
 
-extension Future {
+public extension Future {
     func performing(action: @escaping (Value) throws -> Void) -> Future<Value> {
         return chained { value in
             try action(value)
