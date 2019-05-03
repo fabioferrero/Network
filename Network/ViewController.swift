@@ -35,7 +35,8 @@ class ViewController: UIViewController {
         }
         
         loader.startAnimating()
-        URLSession.shared.request(for: GetRandomPhoto()).transformed(with: UIImage.imageFromData)
+        network.request(service: GetRandomPhoto.self)
+            .transformed(with: UIImage.imageFromData)
             .onSuccess { photo in
                 self.loader.stopAnimating()
                 self.imageView.image = photo
@@ -60,12 +61,17 @@ class ViewController: UIViewController {
             static var path: String = "https://picsum.photos/v2/list"
         }
         
-        network.request(service: GetPhotoList())
+        network.request(service: GetPhotoList.self)
             .logged()
             .decoded(to: [Photo].self)
-            .observe(on: .background) { _ in
-            
-        }
+            .observe(on: .background) { result in
+                switch result {
+                case .success(let photoList):
+                    Logger.log(.debug, message: "Got \(photoList.count) photos")
+                case .failure(let error):
+                    Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
+                }
+            }
     }
 
     func callMyService() {

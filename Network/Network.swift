@@ -13,6 +13,10 @@ protocol DataService {
     static var path: String { get }
 }
 
+extension DataService {
+    static var method: HTTPMethod { return .get }
+}
+
 protocol IOService: DataService {
     associatedtype Input: Encodable
     static var method: HTTPMethod { get }
@@ -35,8 +39,8 @@ final class Network: NSObject {
         return urlSession
     }()
     
-    private typealias HTTPResponse = (data: Data?, urlResponse: URLResponse?, error: Swift.Error?)
-    private typealias CompletionHandler = (_ data: Data?, _ urlResponse: URLResponse?, _ error: Swift.Error?) -> Void
+    private typealias HTTPResponse = (data: Data?, urlResponse: HTTPURLResponse?, error: Swift.Error?)
+    private typealias CompletionHandler = (_ data: Data?, _ urlResponse: HTTPURLResponse?, _ error: Swift.Error?) -> Void
     
     // MARK: HTTP Response
     private var httpResponses: [URLSessionTask: HTTPResponse] = [:]
@@ -77,7 +81,11 @@ final class Network: NSObject {
                 guard let self = self else { return }
                 
                 if let error = error {
-                    completion(Result.failure(Error.networkError(message: error.localizedDescription)))
+                    if let httpResponse: HTTPURLResponse = urlResponse {
+                        completion(Result.failure(Error.httpError(httpResponse, message: error.localizedDescription)))
+                    } else {
+                        completion(Result.failure(Error.networkError(message: error.localizedDescription)))
+                    }
                 } else {
                     guard var data: Data = data else { completion(Result.failure(Error.missingData)); return }
                     
@@ -104,23 +112,24 @@ final class Network: NSObject {
         }
     }
     
-    func request<S: IOService>(service: S.Type, input: S.Input) -> Future<Data> {
+    func request<Service: IOService>(service: Service.Type, input: Service.Input) -> Future<Data> {
         
         let promise = Promise<Data>()
         
-        guard let url = URL(string: S.path) else {
+        guard let url = URL(string: service.path) else {
             promise.reject(with: Error.invalidURL); return promise
         }
         
         do {
             let data: Data = try encoder.encode(input)
             
+            let httpMethod: String = String(describing: service.method)
             if let inputDescription: String = encoder.string(for: input) {
-                Logger.log(.info, message: "⬆️ Request to: \(url)\n\(inputDescription)")
+                Logger.log(.info, message: "⬆️ \(httpMethod) Request to: \(url)\n\(inputDescription)")
             }
             
             var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-            httpRequest.httpMethod = String(describing: S.method)
+            httpRequest.httpMethod = httpMethod
             httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
             httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
             
@@ -130,7 +139,11 @@ final class Network: NSObject {
                 defer { self?.remove(task: downloadTask) }
                 
                 if let error = error {
-                    promise.reject(with: Error.networkError(message: error.localizedDescription))
+                    if let httpResponse: HTTPURLResponse = urlResponse {
+                        promise.reject(with: Error.httpError(httpResponse, message: error.localizedDescription))
+                    } else {
+                        promise.reject(with: Error.networkError(message: error.localizedDescription))
+                    }
                 } else {
                     if let data = data {
                         promise.resolve(with: data)
@@ -148,8 +161,45 @@ final class Network: NSObject {
         return promise
     }
     
-    func callFuture<S: IOService>(service: S.Type, input: S.Input) -> Future<S.Output> {
-        return request(service: service, input: input).decoded()
+    func request<Service: DataService>(service: Service.Type) -> Future<Data> {
+        
+        let promise = Promise<Data>()
+        
+        guard let url = URL(string: service.path) else {
+            promise.reject(with: Error.invalidURL); return promise
+        }
+        
+        let httpMethod: String = String(describing: service.method)
+        Logger.log(.info, message: "⬆️ \(httpMethod) Request to: \(url)")
+        
+        var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
+        httpRequest.httpMethod = httpMethod
+        httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
+        httpRequest.httpBody = nil
+        
+        let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
+        
+        Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
+            defer { self?.remove(task: downloadTask) }
+            
+            if let error = error {
+                if let httpResponse: HTTPURLResponse = urlResponse {
+                    promise.reject(with: Error.httpError(httpResponse, message: error.localizedDescription))
+                } else {
+                    promise.reject(with: Error.networkError(message: error.localizedDescription))
+                }
+            } else {
+                if let data = data {
+                    promise.resolve(with: data)
+                } else {
+                    promise.reject(with: Error.missingData)
+                }
+            }
+        })
+        
+        downloadTask.resume()
+        
+        return promise
     }
 }
 
@@ -160,6 +210,7 @@ extension Network {
         case encodingError(message: String)
         case decodingError(message: String)
         case networkError(message: String)
+        case httpError(_ urlResponse: HTTPURLResponse, message: String)
         
         var localizedDescription: String {
             switch self {
@@ -168,13 +219,13 @@ extension Network {
             case .encodingError(let errorMessage): return "Error during payload encoding: \(errorMessage)"
             case .decodingError(let errorMessage): return "Error during data decoding: \(errorMessage)"
             case .networkError(let errorMessage): return errorMessage
+            case let .httpError(response, errorMessage): return "[\(response.statusCode)] " + errorMessage
             }
         }
     }
 }
 
 extension Network {
-    
     private func add(task: URLSessionTask, withRelatedCompletionHandler completion: @escaping CompletionHandler) {
         httpResponses[task] = (nil, nil, nil)
         dataBuffers[task] = Data()
@@ -225,7 +276,7 @@ extension Network: URLSessionDataDelegate {
             dataBuffers[task] = nil // Clean the buffer
         }
         if let httpResponse = self.httpResponses[task] {
-            let urlResponse: URLResponse? = httpResponse.urlResponse ?? task.response
+            let urlResponse: HTTPURLResponse? = (httpResponse.urlResponse ?? task.response) as? HTTPURLResponse
             self.completionHandlers[task]?(httpResponse.data, urlResponse, httpResponse.error)
         }
     }
@@ -234,7 +285,7 @@ extension Network: URLSessionDataDelegate {
     // the place where you can perform initialization or other related tasks
     // before start recieviing data from response
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        httpResponses[dataTask]?.urlResponse = response
+        httpResponses[dataTask]?.urlResponse = response as? HTTPURLResponse
         completionHandler(.allow)
     }
     
@@ -268,7 +319,9 @@ fileprivate struct DataManager: DataEncoder, DataDecoder {
     
     private init() {
         let encoder = JSONEncoder()
+        #if DEBUG
         encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
+        #endif
         
         self.encoder = encoder
         self.decoder = JSONDecoder()
