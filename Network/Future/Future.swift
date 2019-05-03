@@ -18,53 +18,79 @@ class Future<Value> {
     private typealias SuccessCallback = (Value) -> Void
     private typealias FailureCallback = (Swift.Error) -> Void
     
-    private lazy var callbacks = [Callback]()
-    private lazy var onSuccessCallbacks = [SuccessCallback]()
-    private lazy var onFailureCallbacks = [FailureCallback]()
+    private lazy var callbacks = [(Queue, Callback)]()
+    private lazy var onSuccessCallbacks = [(Queue, SuccessCallback)]()
+    private lazy var onFailureCallbacks = [(Queue, FailureCallback)]()
     
-    func observe(with callback: @escaping (Result<Value, Swift.Error>) -> Void) {
-        callbacks.append(callback)
+    enum Queue { case main; case background }
+    
+    func observe(on queue: Queue = .main, with callback: @escaping (Result<Value, Swift.Error>) -> Void) {
+        callbacks.append((queue, callback))
         
         // If a result has already been set, call the callback directly
-        result.map(callback)
+        result.map { result in
+            switch queue {
+            case .main: DispatchQueue.main.async { callback(result) }
+            case .background: callback(result)
+            }
+        }
     }
     
     @discardableResult
-    func onSuccess(do callback: @escaping (Value) -> Void) -> Future<Value> {
-        onSuccessCallbacks.append(callback)
+    func onSuccess(on queue: Queue = .main, do callback: @escaping (Value) -> Void) -> Future<Value> {
+        onSuccessCallbacks.append((queue, callback))
         
         // If a result has already been set, call the success callback directly
         // only if the result is a success
         result.map { result in
-            if case Result.success(let value) = result { callback(value) }
+            if case Result.success(let value) = result {
+                switch queue {
+                case .main: DispatchQueue.main.async { callback(value) }
+                case .background: callback(value)
+                }
+            }
         }
         return self
     }
     
     @discardableResult
-    func onFailure(do callback: @escaping (Swift.Error) -> Void) -> Future<Value> {
-        onFailureCallbacks.append(callback)
+    func onFailure(on queue: Queue = .main, do callback: @escaping (Swift.Error) -> Void) -> Future<Value> {
+        onFailureCallbacks.append((queue, callback))
         
         // If a result has already been set, call the failure callback directly
         // only if the result is a failure
         result.map { result in
-            if case Result.failure(let error) = result { callback(error) }
+            if case Result.failure(let error) = result {
+                switch queue {
+                case .main: DispatchQueue.main.async { callback(error) }
+                case .background: callback(error)
+                }
+            }
         }
         return self
     }
     
     private func report(result: Result<Value, Swift.Error>) {
-        for callback in callbacks {
-            DispatchQueue.main.async { callback(result) }
+        for (queue, callback) in callbacks {
+            switch queue {
+            case .main: DispatchQueue.main.async { callback(result) }
+            case .background: callback(result)
+            }
         }
         if case Result.success(let value) = result {
-            onSuccessCallbacks.forEach { callback in
-                DispatchQueue.main.async { callback(value) }
+            onSuccessCallbacks.forEach { queue, callback in
+                switch queue {
+                case .main: DispatchQueue.main.async { callback(value) }
+                case .background: callback(value)
+                }
             }
         }
         if case Result.failure(let error) = result {
-            onFailureCallbacks.forEach { callback in
-                DispatchQueue.main.async { callback(error) }
+            onFailureCallbacks.forEach { queue, callback in
+                switch queue {
+                case .main: DispatchQueue.main.async { callback(error) }
+                case .background: callback(error)
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ import Foundation
 
 extension Future where Value == Data {
     func logged(with message: String? = nil) -> Future<Value> {
-        return applying { data in
+        return performing { data in
             if let outputDescription = String(data: data, encoding: .utf8) {
                 let message: String = message ?? ""
                 Logger.log(.info, message: message + "\n\(outputDescription)")

@@ -35,42 +35,38 @@ class ViewController: UIViewController {
         }
         
         loader.startAnimating()
-        URLSession.shared.request(for: GetRandomPhoto()).transformed { data -> UIImage in
-            if let image = UIImage(data: data) {
-                return image
-            } else {
-                throw UIImage.Error.imageNotCreated
-            }
-        }.onSuccess { photo in
-            self.loader.stopAnimating()
-            self.imageView.image = photo
-        }.onFailure { error in
-            self.loader.stopAnimating()
-            let alert = Alert(title: "Error", message: error.localizedDescription)
-            alert.show(from: self)
-        }
-        
-//        if errorSwitch.isOn {
-//            callErrorService()
-//        } else {
-//            callMyService()
-//        }
-    }
-    
-    func callErrorService() {
-        network.call(service: Services.errorService, input: ErrorService.Input()) { result in
-            switch result {
-            case .success:
-                let alert = Alert(title: "Success", message: "It was actually a real success.")
-                alert.show(from: self)
-            case .failure(error: let error):
+        URLSession.shared.request(for: GetRandomPhoto()).transformed(with: UIImage.imageFromData)
+            .onSuccess { photo in
+                self.loader.stopAnimating()
+                self.imageView.image = photo
+            }.onFailure { error in
+                self.loader.stopAnimating()
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
+        
+        // In background
+        struct Photo: Decodable {
+            var id: String
+            var author: String
+            var width: Int
+            var height: Int
+            var url: String
+            var download_url: String
+        }
+        
+        struct GetPhotoList: DataService {
+            typealias Output = [Photo]
+            static var path: String = "https://picsum.photos/v2/list"
+        }
+        
+        network.request(service: GetPhotoList())
+            .logged()
+            .decoded(to: [Photo].self)
+            .observe(on: .background) { _ in
+            
         }
     }
-
-    private var backgroundPost: Post?
 
     func callMyService() {
         let newPost = NewPost(userId: 3, title: "Title", body: "Body")
@@ -80,26 +76,12 @@ class ViewController: UIViewController {
             self.loader.stopAnimating()
             switch result {
             case .success(let thePostThatYouWereWaitingFor):
-                self.use(thePostThatYouWereWaitingFor)
                 thePostThatYouWereWaitingFor.foo()
             case .failure(let error):
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
         }
-
-        network.call(service: GetPhotosList.self, input: EmptyPayload(), onQueue: .background) { result in
-            switch result {
-            case .success: Logger.log(.info, message: "Success!")
-            case .failure(let error):
-                let alert = Alert(title: "Error", message: error.localizedDescription)
-                alert.show(from: self)
-            }
-        }
-    }
-
-    func use(_ post: Post) {
-        Logger.log(.verbose, message: "Using: \(post)")
     }
 }
 
@@ -111,6 +93,14 @@ extension UIImage {
             switch self {
             case .imageNotCreated: return "Impossible to create image"
             }
+        }
+    }
+    
+    static func imageFromData(_ data: Data) throws -> UIImage {
+        if let image = UIImage(data: data) {
+            return image
+        } else {
+            throw UIImage.Error.imageNotCreated
         }
     }
 }
