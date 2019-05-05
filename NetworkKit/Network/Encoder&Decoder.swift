@@ -8,12 +8,12 @@
 
 import Foundation
 
-protocol DataEncoder {
+public protocol DataEncoder {
     func encode<Input: Encodable>(_ value: Input) throws -> Data
     func string<Input: Encodable>(for value: Input) -> String?
 }
 
-protocol DataDecoder {
+public protocol DataDecoder {
     func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output
 }
 

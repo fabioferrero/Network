@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum HTTPMethod: String {
+public enum HTTPMethod: String {
     case get
     case post
     case put
@@ -17,12 +17,12 @@ enum HTTPMethod: String {
 }
 
 extension HTTPMethod: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         return self.rawValue.uppercased()
     }
 }
 
-enum HTTPStatusCode: Int {
+public enum HTTPStatusCode: Int {
     case ok                     = 200
     case created                = 201
     case accepted               = 202

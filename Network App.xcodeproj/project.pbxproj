@@ -16,16 +16,22 @@
 		B41947EF227CB96A00C22D85 /* FutureDecoded.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41115992274996300192AF2 /* FutureDecoded.swift */; };
 		B41947F1227CB96A00C22D85 /* FutureSaved.swift in Sources */ = {isa = PBXBuildFile; fileRef = B411159B2274997E00192AF2 /* FutureSaved.swift */; };
 		B41947F2227CB98E00C22D85 /* FutureLogged.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B5E218227B224000E6C560 /* FutureLogged.swift */; };
-		B41947F4227CB9E800C22D85 /* FutureNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41947F3227CB9E800C22D85 /* FutureNetwork.swift */; };
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
 		B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AEBE4227F4B73004C9ABC /* Models.swift */; };
+		B46AEBEF227F4D93004C9ABC /* NetworkKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B46AEBED227F4D93004C9ABC /* NetworkKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B46AEBF2227F4D93004C9ABC /* NetworkKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */; };
+		B46AEBF3227F4D93004C9ABC /* NetworkKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B46AEBF7227F4DEA004C9ABC /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0519205D7CDF0094A002 /* Network.swift */; };
+		B46AEBF8227F4DEA004C9ABC /* FutureNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41947F3227CB9E800C22D85 /* FutureNetwork.swift */; };
+		B46AEBF9227F4DEA004C9ABC /* URLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B5E2122279C0B400E6C560 /* URLSession.swift */; };
+		B46AEBFA227F4DEA004C9ABC /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F02269FC26005B66BC /* SecurityManager.swift */; };
+		B46AEBFB227F4DEA004C9ABC /* Encoder&Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */; };
+		B46AEBFC227F4DEA004C9ABC /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F42269FCEF005B66BC /* HTTP.swift */; };
+		B46AEBFF227F4F40004C9ABC /* FutureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B41947DF227CB8F400C22D85 /* FutureKit.framework */; };
+		B46AEC01227F53EB004C9ABC /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AEC00227F53EB004C9ABC /* Service.swift */; };
 		B4A6D1EF2269F9FD005B66BC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B4A6D1EE2269F9FD005B66BC /* README.md */; };
-		B4A6D1F12269FC26005B66BC /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F02269FC26005B66BC /* SecurityManager.swift */; };
-		B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */; };
-		B4A6D1F52269FCEF005B66BC /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F42269FCEF005B66BC /* HTTP.swift */; };
 		B4A6D1F7226A03A2005B66BC /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F6226A03A2005B66BC /* Services.swift */; };
-		E14D051A205D7CDF0094A002 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14D0519205D7CDF0094A002 /* Network.swift */; };
 		E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0322045C2AC00F8C79F /* AppDelegate.swift */; };
 		E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168D0342045C2AC00F8C79F /* ViewController.swift */; };
 		E168D0382045C2AC00F8C79F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E168D0362045C2AC00F8C79F /* Main.storyboard */; };
@@ -41,6 +47,13 @@
 			remoteGlobalIDString = B41947DE227CB8F400C22D85;
 			remoteInfo = FutureKit;
 		};
+		B46AEBF0227F4D93004C9ABC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E168D0272045C2AC00F8C79F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B46AEBEA227F4D92004C9ABC;
+			remoteInfo = NetworkKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +63,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B46AEBF3227F4D93004C9ABC /* NetworkKit.framework in Embed Frameworks */,
 				B41947E7227CB8F400C22D85 /* FutureKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -70,6 +84,10 @@
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		B46AEBE4227F4B73004C9ABC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetworkKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B46AEBED227F4D93004C9ABC /* NetworkKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkKit.h; sourceTree = "<group>"; };
+		B46AEBEE227F4D93004C9ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B46AEC00227F53EB004C9ABC /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		B4A6D1EE2269F9FD005B66BC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B4A6D1F02269FC26005B66BC /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encoder&Decoder.swift"; sourceTree = "<group>"; };
@@ -95,10 +113,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B46AEBE8227F4D92004C9ABC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B46AEBFF227F4F40004C9ABC /* FutureKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E168D02C2045C2AC00F8C79F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B46AEBF2227F4D93004C9ABC /* NetworkKit.framework in Frameworks */,
 				B41947E6227CB8F400C22D85 /* FutureKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,6 +160,7 @@
 			children = (
 				E14D0519205D7CDF0094A002 /* Network.swift */,
 				B41947F3227CB9E800C22D85 /* FutureNetwork.swift */,
+				B46AEC00227F53EB004C9ABC /* Service.swift */,
 				B4B5E2122279C0B400E6C560 /* URLSession.swift */,
 				B4A6D1F02269FC26005B66BC /* SecurityManager.swift */,
 				B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */,
@@ -141,13 +169,32 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		B46AEBEC227F4D93004C9ABC /* NetworkKit */ = {
+			isa = PBXGroup;
+			children = (
+				B46AEBED227F4D93004C9ABC /* NetworkKit.h */,
+				B46AEBEE227F4D93004C9ABC /* Info.plist */,
+				B419480D227CBEA200C22D85 /* Network */,
+			);
+			path = NetworkKit;
+			sourceTree = "<group>";
+		};
+		B46AEBFE227F4F40004C9ABC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E168D0262045C2AC00F8C79F = {
 			isa = PBXGroup;
 			children = (
 				B4A6D1EE2269F9FD005B66BC /* README.md */,
 				E168D0312045C2AC00F8C79F /* Network App */,
+				B46AEBEC227F4D93004C9ABC /* NetworkKit */,
 				B41947E0227CB8F400C22D85 /* FutureKit */,
 				E168D0302045C2AC00F8C79F /* Products */,
+				B46AEBFE227F4F40004C9ABC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +203,7 @@
 			children = (
 				E168D02F2045C2AC00F8C79F /* Network App.app */,
 				B41947DF227CB8F400C22D85 /* FutureKit.framework */,
+				B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -164,7 +212,6 @@
 			isa = PBXGroup;
 			children = (
 				E168D0322045C2AC00F8C79F /* AppDelegate.swift */,
-				B419480D227CBEA200C22D85 /* Network */,
 				B46AEBE4227F4B73004C9ABC /* Models.swift */,
 				B4A6D1F6226A03A2005B66BC /* Services.swift */,
 				E168D0342045C2AC00F8C79F /* ViewController.swift */,
@@ -190,6 +237,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B46AEBE6227F4D92004C9ABC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B46AEBEF227F4D93004C9ABC /* NetworkKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -211,6 +266,24 @@
 			productReference = B41947DF227CB8F400C22D85 /* FutureKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B46AEBEA227F4D92004C9ABC /* NetworkKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B46AEBF4227F4D93004C9ABC /* Build configuration list for PBXNativeTarget "NetworkKit" */;
+			buildPhases = (
+				B46AEBE6227F4D92004C9ABC /* Headers */,
+				B46AEBE7227F4D92004C9ABC /* Sources */,
+				B46AEBE8227F4D92004C9ABC /* Frameworks */,
+				B46AEBE9227F4D92004C9ABC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NetworkKit;
+			productName = NetworkKit;
+			productReference = B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		E168D02E2045C2AC00F8C79F /* Network App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E168D0412045C2AC00F8C79F /* Build configuration list for PBXNativeTarget "Network App" */;
@@ -224,6 +297,7 @@
 			);
 			dependencies = (
 				B41947E5227CB8F400C22D85 /* PBXTargetDependency */,
+				B46AEBF1227F4D93004C9ABC /* PBXTargetDependency */,
 			);
 			name = "Network App";
 			productName = Network;
@@ -241,6 +315,10 @@
 				ORGANIZATIONNAME = "Fabio Ferrero";
 				TargetAttributes = {
 					B41947DE227CB8F400C22D85 = {
+						CreatedOnToolsVersion = 10.2.1;
+						ProvisioningStyle = Automatic;
+					};
+					B46AEBEA227F4D92004C9ABC = {
 						CreatedOnToolsVersion = 10.2.1;
 						ProvisioningStyle = Automatic;
 					};
@@ -266,12 +344,20 @@
 			targets = (
 				E168D02E2045C2AC00F8C79F /* Network App */,
 				B41947DE227CB8F400C22D85 /* FutureKit */,
+				B46AEBEA227F4D92004C9ABC /* NetworkKit */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B41947DD227CB8F400C22D85 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B46AEBE9227F4D92004C9ABC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -304,21 +390,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B46AEBE7227F4D92004C9ABC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B46AEBF7227F4DEA004C9ABC /* Network.swift in Sources */,
+				B46AEC01227F53EB004C9ABC /* Service.swift in Sources */,
+				B46AEBF8227F4DEA004C9ABC /* FutureNetwork.swift in Sources */,
+				B46AEBF9227F4DEA004C9ABC /* URLSession.swift in Sources */,
+				B46AEBFC227F4DEA004C9ABC /* HTTP.swift in Sources */,
+				B46AEBFA227F4DEA004C9ABC /* SecurityManager.swift in Sources */,
+				B46AEBFB227F4DEA004C9ABC /* Encoder&Decoder.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E168D02B2045C2AC00F8C79F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */,
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
-				B41947F4227CB9E800C22D85 /* FutureNetwork.swift in Sources */,
 				B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
-				B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */,
-				B4A6D1F52269FCEF005B66BC /* HTTP.swift in Sources */,
-				E14D051A205D7CDF0094A002 /* Network.swift in Sources */,
 				B4A6D1F7226A03A2005B66BC /* Services.swift in Sources */,
-				B4A6D1F12269FC26005B66BC /* SecurityManager.swift in Sources */,
 				B41947F2227CB98E00C22D85 /* FutureLogged.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +425,11 @@
 			isa = PBXTargetDependency;
 			target = B41947DE227CB8F400C22D85 /* FutureKit */;
 			targetProxy = B41947E4227CB8F400C22D85 /* PBXContainerItemProxy */;
+		};
+		B46AEBF1227F4D93004C9ABC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B46AEBEA227F4D92004C9ABC /* NetworkKit */;
+			targetProxy = B46AEBF0227F4D93004C9ABC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -399,6 +499,61 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "fabfer-dev.FutureKit";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B46AEBF5227F4D93004C9ABC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = R2K55BVQV8;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NetworkKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "fabfer-dev.NetworkKit";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B46AEBF6227F4D93004C9ABC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = R2K55BVQV8;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NetworkKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "fabfer-dev.NetworkKit";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -561,6 +716,15 @@
 			buildConfigurations = (
 				B41947E8227CB8F400C22D85 /* Debug */,
 				B41947E9227CB8F400C22D85 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B46AEBF4227F4D93004C9ABC /* Build configuration list for PBXNativeTarget "NetworkKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B46AEBF5227F4D93004C9ABC /* Debug */,
+				B46AEBF6227F4D93004C9ABC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

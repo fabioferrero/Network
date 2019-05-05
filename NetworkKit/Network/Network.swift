@@ -7,54 +7,39 @@
 //
 
 import Foundation
-import FutureKit
 
-protocol DataService {
-    associatedtype Output: Decodable
-    static var path: String { get }
-}
-
-extension DataService {
-    static var method: HTTPMethod { return .get }
-}
-
-protocol IOService: DataService {
-    associatedtype Input: Encodable
-    static var method: HTTPMethod { get }
-}
-
-final class Network: NSObject {
+public final class Network: NSObject {
     
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
-    static let shared: Network = Network()
+    public static let shared: Network = Network()
     private override init() { super.init() }
     
-    var securityManager: SecurityManager?
-    var encoder: DataEncoder = DataManager.default
-    var decoder: DataDecoder = DataManager.default
+    public var securityManager: SecurityManager?
+    public var decoder: DataDecoder = DataManager.default
+    public var encoder: DataEncoder = DataManager.default
     
-    private lazy var backgroundSession: URLSession = {
+    lazy var backgroundSession: URLSession = {
         let configuration: URLSessionConfiguration = .background(withIdentifier: Constants.sessionIdentifier)
         let urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
         return urlSession
     }()
     
-    private typealias HTTPResponse = (data: Data?, urlResponse: HTTPURLResponse?, error: Swift.Error?)
-    private typealias CompletionHandler = (_ data: Data?, _ urlResponse: HTTPURLResponse?, _ error: Swift.Error?) -> Void
+    typealias HTTPResponse = (data: Data?, urlResponse: HTTPURLResponse?, error: Swift.Error?)
+    typealias CompletionHandler = (_ data: Data?, _ urlResponse: HTTPURLResponse?, _ error: Swift.Error?) -> Void
     
     // MARK: HTTP Response
     private var httpResponses: [URLSessionTask: HTTPResponse] = [:]
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
     
-    var backgroudSessionCompletionHandler: (() -> Void)?
+    public var backgroudSessionCompletionHandler: (() -> Void)?
     
     // MARK: Network call
     
-    enum Queue { case main; case background }
+    public enum Queue { case main; case background }
     
-    func call<S: IOService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
+    public func call<S: IOService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
         
         func completion(_ response: Result<Output, Swift.Error>) {
             if responseQueue == Queue.main { DispatchQueue.main.async { onCompletion(response) } }
@@ -116,98 +101,6 @@ final class Network: NSObject {
             completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
         }
     }
-    
-    func request<Service: IOService>(service: Service.Type, input: Service.Input) -> Future<Data> {
-        
-        let promise = Promise<Data>()
-        
-        guard let url = URL(string: service.path) else {
-            promise.reject(with: Error.invalidURL); return promise
-        }
-        
-        do {
-            let data: Data = try encoder.encode(input)
-            
-            let httpMethod: String = String(describing: service.method)
-            if let inputDescription: String = encoder.string(for: input) {
-                #warning("TODO: Create Network logger")
-                print("⬆️ \(httpMethod) Request to: \(url)\n\(inputDescription)")
-            }
-            
-            var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-            httpRequest.httpMethod = httpMethod
-            httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
-            httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
-            
-            let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
-            
-            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-                defer { self?.remove(task: downloadTask) }
-                
-                if let error = error {
-                    if let httpResponse: HTTPURLResponse = urlResponse {
-                        promise.reject(with: Error.httpError(httpResponse, message: error.localizedDescription))
-                    } else {
-                        promise.reject(with: Error.networkError(message: error.localizedDescription))
-                    }
-                } else {
-                    if let data = data {
-                        promise.resolve(with: data)
-                    } else {
-                        promise.reject(with: Error.missingData)
-                    }
-                }
-            })
-            
-            downloadTask.resume()
-        } catch {
-            promise.reject(with: Error.encodingError(message: error.localizedDescription))
-        }
-        
-        return promise
-    }
-    
-    func request<Service: DataService>(service: Service.Type) -> Future<Data> {
-        
-        let promise = Promise<Data>()
-        
-        guard let url = URL(string: service.path) else {
-            promise.reject(with: Error.invalidURL); return promise
-        }
-        
-        let httpMethod: String = String(describing: service.method)
-        #warning("TODO: Create Network logger")
-        print("⬆️ \(httpMethod) Request to: \(url)")
-        
-        var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-        httpRequest.httpMethod = httpMethod
-        httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
-        httpRequest.httpBody = nil
-        
-        let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
-        
-        Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-            defer { self?.remove(task: downloadTask) }
-            
-            if let error = error {
-                if let httpResponse: HTTPURLResponse = urlResponse {
-                    promise.reject(with: Error.httpError(httpResponse, message: error.localizedDescription))
-                } else {
-                    promise.reject(with: Error.networkError(message: error.localizedDescription))
-                }
-            } else {
-                if let data = data {
-                    promise.resolve(with: data)
-                } else {
-                    promise.reject(with: Error.missingData)
-                }
-            }
-        })
-        
-        downloadTask.resume()
-        
-        return promise
-    }
 }
 
 extension Network {
@@ -233,20 +126,20 @@ extension Network {
 }
 
 extension Network {
-    private func add(task: URLSessionTask, withRelatedCompletionHandler completion: @escaping CompletionHandler) {
+    func add(task: URLSessionTask, withRelatedCompletionHandler completion: @escaping CompletionHandler) {
         httpResponses[task] = (nil, nil, nil)
         dataBuffers[task] = Data()
         completionHandlers[task] = completion
     }
     
-    private func remove(task: URLSessionTask) {
+    func remove(task: URLSessionTask) {
         httpResponses[task] = nil
         dataBuffers[task] = nil
         completionHandlers[task] = nil
     }
 }
 
-private extension Network {
+extension Network {
     #warning("TODO: Create a configuration instead of Constants")
     struct Constants {
         static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
@@ -259,7 +152,7 @@ private extension Network {
 extension Network: URLSessionDelegate {
     // This delegate method is needed in order to reactivate the backgroud
     // session when the app is not in foreground
-    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+    public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         if let completionHandler = self.backgroudSessionCompletionHandler {
             self.backgroudSessionCompletionHandler = nil
             completionHandler()
@@ -270,7 +163,7 @@ extension Network: URLSessionDelegate {
 extension Network: URLSessionDataDelegate {
     // This delegate method is called when session task is finished. Check for
     // presence of `error` object to decide if call was successful or not
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Swift.Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Swift.Error?) {
         if let error = error {
             httpResponses[task]?.error = error
         } else if let data = dataBuffers[task] {
@@ -288,14 +181,14 @@ extension Network: URLSessionDataDelegate {
     // This delegate method is called once when response is recieved. This is
     // the place where you can perform initialization or other related tasks
     // before start recieviing data from response
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         httpResponses[dataTask]?.urlResponse = response as? HTTPURLResponse
         completionHandler(.allow)
     }
     
     // This delegate method is called when response data is recieved in chunks
     // or in one shot.
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         dataBuffers[dataTask]?.append(data)
     }
 }
@@ -303,7 +196,7 @@ extension Network: URLSessionDataDelegate {
 extension Network: URLSessionDownloadDelegate {
     // This delegate method id called when the `dowloadTask` has finished its
     // work of downloading. It wrote in `location` all dowloaded data.
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)

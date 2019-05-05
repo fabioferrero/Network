@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NetworkKit
 
 enum Services {
     static let createNewPost = CreateNewPost.self
