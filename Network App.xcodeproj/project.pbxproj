@@ -19,6 +19,7 @@
 		B41947F4227CB9E800C22D85 /* FutureNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41947F3227CB9E800C22D85 /* FutureNetwork.swift */; };
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
+		B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AEBE4227F4B73004C9ABC /* Models.swift */; };
 		B4A6D1EF2269F9FD005B66BC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B4A6D1EE2269F9FD005B66BC /* README.md */; };
 		B4A6D1F12269FC26005B66BC /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F02269FC26005B66BC /* SecurityManager.swift */; };
 		B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */; };
@@ -68,6 +69,7 @@
 		B41947F3227CB9E800C22D85 /* FutureNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureNetwork.swift; sourceTree = "<group>"; };
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		B46AEBE4227F4B73004C9ABC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B4A6D1EE2269F9FD005B66BC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B4A6D1F02269FC26005B66BC /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encoder&Decoder.swift"; sourceTree = "<group>"; };
@@ -132,7 +134,6 @@
 				E14D0519205D7CDF0094A002 /* Network.swift */,
 				B41947F3227CB9E800C22D85 /* FutureNetwork.swift */,
 				B4B5E2122279C0B400E6C560 /* URLSession.swift */,
-				B4A6D1F6226A03A2005B66BC /* Services.swift */,
 				B4A6D1F02269FC26005B66BC /* SecurityManager.swift */,
 				B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */,
 				B4A6D1F42269FCEF005B66BC /* HTTP.swift */,
@@ -164,6 +165,8 @@
 			children = (
 				E168D0322045C2AC00F8C79F /* AppDelegate.swift */,
 				B419480D227CBEA200C22D85 /* Network */,
+				B46AEBE4227F4B73004C9ABC /* Models.swift */,
+				B4A6D1F6226A03A2005B66BC /* Services.swift */,
 				E168D0342045C2AC00F8C79F /* ViewController.swift */,
 				B42C08BB20CD1F2000A39F69 /* Environment.swift */,
 				B42C08BC20CD1F2000A39F69 /* Logger.swift */,
@@ -308,6 +311,7 @@
 				B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */,
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
 				B41947F4227CB9E800C22D85 /* FutureNetwork.swift in Sources */,
+				B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
 				B4A6D1F32269FC54005B66BC /* Encoder&Decoder.swift in Sources */,

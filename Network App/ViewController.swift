@@ -28,12 +28,6 @@ class ViewController: UIViewController {
     }
     
     @IBAction func callButtonTapped() {
-        
-        struct GetRandomPhoto: DataService {
-            typealias Output = Photo
-            static var path: String = "https://picsum.photos/480"
-        }
-        
         loader.startAnimating()
         network.request(service: GetRandomPhoto.self)
             .transformed(with: UIImage.imageFromData)
@@ -47,20 +41,6 @@ class ViewController: UIViewController {
             }
         
         // In background
-        struct Photo: Decodable {
-            var id: String
-            var author: String
-            var width: Int
-            var height: Int
-            var url: String
-            var download_url: String
-        }
-        
-        struct GetPhotoList: DataService {
-            typealias Output = [Photo]
-            static var path: String = "https://picsum.photos/v2/list"
-        }
-        
         network.request(service: GetPhotoList.self)
             .logged()
             .decoded(to: [Photo].self)

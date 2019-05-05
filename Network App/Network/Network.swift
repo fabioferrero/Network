@@ -69,7 +69,8 @@ final class Network: NSObject {
             let data: Data = try encoder.encode(input)
             
             if let inputDescription: String = encoder.string(for: input) {
-                Logger.log(.info, message: "⬆️ Request to: \(url)\n\(inputDescription)")
+                #warning("TODO: Create Network logger")
+                print("⬆️ Request to: \(url)\n\(inputDescription)")
             }
             
             var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
@@ -97,7 +98,8 @@ final class Network: NSObject {
                     }
                     
                     if let outputDescription = String(data: data, encoding: .utf8) {
-                        Logger.log(.info, message: "⬇️ Response from: \(url)\n\(outputDescription)")
+                        #warning("TODO: Create Network logger")
+                        print("⬇️ Response from: \(url)\n\(outputDescription)")
                     }
                     
                     do {
@@ -128,7 +130,8 @@ final class Network: NSObject {
             
             let httpMethod: String = String(describing: service.method)
             if let inputDescription: String = encoder.string(for: input) {
-                Logger.log(.info, message: "⬆️ \(httpMethod) Request to: \(url)\n\(inputDescription)")
+                #warning("TODO: Create Network logger")
+                print("⬆️ \(httpMethod) Request to: \(url)\n\(inputDescription)")
             }
             
             var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
@@ -173,7 +176,8 @@ final class Network: NSObject {
         }
         
         let httpMethod: String = String(describing: service.method)
-        Logger.log(.info, message: "⬆️ \(httpMethod) Request to: \(url)")
+        #warning("TODO: Create Network logger")
+        print("⬆️ \(httpMethod) Request to: \(url)")
         
         var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
         httpRequest.httpMethod = httpMethod
@@ -304,7 +308,8 @@ extension Network: URLSessionDownloadDelegate {
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)
         } catch {
-            Logger.log(.error, message: error.localizedDescription)
+            #warning("TODO: Create Network logger")
+            print("Error: " + error.localizedDescription)
         }
     }
 }
