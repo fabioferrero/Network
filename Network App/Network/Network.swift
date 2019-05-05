@@ -6,7 +6,7 @@
 //  Copyright © 2018 Fabio Ferrero. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import FutureKit
 
 protocol DataService {
@@ -47,6 +47,8 @@ final class Network: NSObject {
     private var httpResponses: [URLSessionTask: HTTPResponse] = [:]
     private var dataBuffers: [URLSessionTask: Data] = [:]
     private var completionHandlers: [URLSessionTask: CompletionHandler] = [:]
+    
+    var backgroudSessionCompletionHandler: (() -> Void)?
     
     // MARK: Network call
     
@@ -244,7 +246,7 @@ private extension Network {
     #warning("TODO: Create a configuration instead of Constants")
     struct Constants {
         static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
-        static let timeoutInterval: TimeInterval = 20.0
+        static let timeoutInterval: TimeInterval = 10.0
     }
 }
 
@@ -254,12 +256,9 @@ extension Network: URLSessionDelegate {
     // This delegate method is needed in order to reactivate the backgroud
     // session when the app is not in foreground
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        DispatchQueue.main.async {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-                let completionHandler = appDelegate.backgroudSessionCompletionHandler {
-                appDelegate.backgroudSessionCompletionHandler = nil
-                completionHandler()
-            }
+        if let completionHandler = self.backgroudSessionCompletionHandler {
+            self.backgroudSessionCompletionHandler = nil
+            completionHandler()
         }
     }
 }

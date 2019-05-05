@@ -13,10 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    var backgroudSessionCompletionHandler: (() -> Void)?
+    lazy var network: Network = Network.shared
     
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-        backgroudSessionCompletionHandler = completionHandler
+        network.backgroudSessionCompletionHandler = completionHandler
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
