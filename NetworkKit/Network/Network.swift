@@ -54,19 +54,15 @@ public final class Network: NSObject {
             let data: Data = try encoder.encode(input)
             
             if let inputDescription: String = encoder.string(for: input) {
-                #warning("TODO: Create Network logger")
-                print("⬆️ Request to: \(url)\n\(inputDescription)")
+                print("⬆️\t[N] Request to: \(url)\n\(inputDescription)")
             }
             
-            var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-            httpRequest.httpMethod = String(describing: S.method)
-            httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
-            httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
+            var httpRequest: URLRequest = createHTTPRequest(method: S.method, for: url, with: data)
             
-            let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
+            let task: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
             
-            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-                defer { self?.remove(task: downloadTask) }
+            self.add(task: task, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
+                defer { self?.remove(task: task) }
                 guard let self = self else { return }
                 
                 if let error = error {
@@ -83,8 +79,7 @@ public final class Network: NSObject {
                     }
                     
                     if let outputDescription = String(data: data, encoding: .utf8) {
-                        #warning("TODO: Create Network logger")
-                        print("⬇️ Response from: \(url)\n\(outputDescription)")
+                        print("⬇️\t[N] Response from: \(url)\n\(outputDescription)")
                     }
                     
                     do {
@@ -96,10 +91,22 @@ public final class Network: NSObject {
                 }
             })
             
-            downloadTask.resume()
+            task.resume()
         } catch {
             completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
         }
+    }
+}
+
+extension Network {
+    func createHTTPRequest(method: HTTPMethod = .get, for url: URL, with data: Data = Data()) -> URLRequest {
+        var httpRequest = URLRequest(url: url,
+                                     cachePolicy: .useProtocolCachePolicy,
+                                     timeoutInterval: Constants.timeoutInterval)
+        httpRequest.httpMethod = String(describing: method)
+        httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
+        httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
+        return httpRequest
     }
 }
 
@@ -201,8 +208,7 @@ extension Network: URLSessionDownloadDelegate {
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)
         } catch {
-            #warning("TODO: Create Network logger")
-            print("Error: " + error.localizedDescription)
+            print("❌\t[E] Error: " + error.localizedDescription)
         }
     }
 }

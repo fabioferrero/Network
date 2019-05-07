@@ -10,13 +10,12 @@ import Foundation
 import FutureKit
 
 extension Future where Value == Data {
-    func logged(with message: String? = nil) -> Future<Value> {
+    public func logged() -> Future<Value> {
         return performing { data in
             if let outputDescription = String(data: data, encoding: .utf8) {
-                let message: String = message ?? ""
-                Logger.log(.info, message: message + "\n\(outputDescription)")
+                print(outputDescription)
             } else {
-                Logger.log(.warning, message: "Cannot log data: [\(data)]")
+                print("Cannot log data: [\(data)]")
             }
         }
     }

@@ -19,18 +19,14 @@ extension Network {
         }
         
         let httpMethod: String = String(describing: service.method)
-        #warning("TODO: Create Network logger")
-        print("⬆️ \(httpMethod) Request to: \(url)")
+        print("⬆️\t[N] \(httpMethod) Request to: \(url)")
         
-        var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-        httpRequest.httpMethod = httpMethod
-        httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
-        httpRequest.httpBody = nil
+        var httpRequest: URLRequest = createHTTPRequest(for: url)
         
-        let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
+        let task: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
         
-        Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-            defer { self?.remove(task: downloadTask) }
+        self.add(task: task, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
+            defer { self?.remove(task: task) }
             
             if let error = error {
                 if let httpResponse: HTTPURLResponse = urlResponse {
@@ -47,7 +43,7 @@ extension Network {
             }
         })
         
-        downloadTask.resume()
+        task.resume()
         
         return promise
     }
@@ -65,19 +61,15 @@ extension Network {
             
             let httpMethod: String = String(describing: service.method)
             if let inputDescription: String = encoder.string(for: input) {
-                #warning("TODO: Create Network logger")
-                print("⬆️ \(httpMethod) Request to: \(url)\n\(inputDescription)")
+                print("⬆️\t[N] \(httpMethod) Request to: \(url)\n\(inputDescription)")
             }
             
-            var httpRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Constants.timeoutInterval)
-            httpRequest.httpMethod = httpMethod
-            httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
-            httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
+            var httpRequest: URLRequest = createHTTPRequest(method: service.method, for: url, with: data)
             
-            let downloadTask: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
+            let task: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
             
-            Network.shared.add(task: downloadTask, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-                defer { self?.remove(task: downloadTask) }
+            self.add(task: task, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
+                defer { self?.remove(task: task) }
                 
                 if let error = error {
                     if let httpResponse: HTTPURLResponse = urlResponse {
@@ -94,7 +86,7 @@ extension Network {
                 }
             })
             
-            downloadTask.resume()
+            task.resume()
         } catch {
             promise.reject(with: Error.encodingError(message: error.localizedDescription))
         }
