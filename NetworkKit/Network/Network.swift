@@ -104,7 +104,7 @@ public final class Network: NSObject {
 }
 
 extension Network {
-    enum Error: Swift.Error {
+    enum Error: Swift.Error, LocalizedError {
         case invalidURL
         case missingData
         case encodingError(message: String)
@@ -112,7 +112,7 @@ extension Network {
         case networkError(message: String)
         case httpError(_ urlResponse: HTTPURLResponse, message: String)
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .invalidURL: return "Invalid URL in request: cannot create URL from String."
             case .missingData: return "Missing data in response."

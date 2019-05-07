@@ -40,11 +40,11 @@ extension URLSession {
 }
 
 extension URLSession {
-    enum Error: Swift.Error {
+    enum Error: Swift.Error, LocalizedError {
         case missingData
         case invalidURL
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .missingData: return "Missing data in response."
             case .invalidURL: return "Invalid URL in request: cannot create URL from String."

@@ -9,6 +9,8 @@
 import UIKit
 import NetworkKit
 
+var shouldFail: Bool = false
+
 class ViewController: UIViewController {
     
     @IBOutlet private weak var errorSwitch: UISwitch!
@@ -70,20 +72,29 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    @IBAction func switchDidChanged(_ sender: UISwitch) {
+        shouldFail = sender.isOn
+    }
 }
 
 extension UIImage {
-    enum Error: Swift.Error {
+    enum Error: Swift.Error, LocalizedError {
         case imageNotCreated
+        case mockedError
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .imageNotCreated: return "Impossible to create image"
+            case .mockedError: return "The image was not so great"
             }
         }
     }
     
     static func imageFromData(_ data: Data) throws -> UIImage {
+        if shouldFail {
+            throw UIImage.Error.mockedError
+        }
         if let image = UIImage(data: data) {
             return image
         } else {
