@@ -45,7 +45,6 @@ class ViewController: UIViewController {
         
         // In background
         network.request(service: GetPhotoList.self)
-            .logged()
             .decoded(to: [Photo].self)
             .observe(on: .background) { result in
                 switch result {

@@ -67,3 +67,29 @@ public enum HTTPStatusCode: Int {
         }
     }
 }
+
+extension HTTPStatusCode: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .ok:                   return "\(code) OK"
+        case .created:              return "\(code) CREATED"
+        case .accepted:             return "\(code) ACCEPTED"
+        case .noContent:            return "\(code) NO CONTENT"
+        case .movedPermanently:     return "\(code) MOVED PERMANENTLY"
+        case .found:                return "\(code) FOUND"
+        case .seeOther:             return "\(code) SEE OTHER"
+        case .notModified:          return "\(code) NOT MODIFIED"
+        case .temporaryRedirect:    return "\(code) TEMPORARY REDIRECT"
+        case .badRequest:           return "\(code) BAD REQUEST"
+        case .unauthorized:         return "\(code) UNAUTHORIZED"
+        case .forbidden:            return "\(code) FORBIDDEN"
+        case .notFound:             return "\(code) NOT FOUND"
+        case .methodNotAllowed:     return "\(code) METHOD NOT ALLOWED"
+        case .notAcceptable:        return "\(code) NOT ACCEPTABLE"
+        case .preconditionFailed:   return "\(code) PRECONDITION FAILED"
+        case .unsupportedMedia:     return "\(code) UNSUPPORTED MEDIA"
+        case .internalServerError:  return "\(code) INTERNAL SERVER ERROR"
+        case .notImplemented:       return "\(code) NOT IMPLEMENTED"
+        }
+    }
+}
