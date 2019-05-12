@@ -37,5 +37,5 @@ struct GetRandomPhoto: DataService {
 
 struct GetPhotoList: DataService {
     typealias Output = [Photo]
-    static var path: String = "https://picsum.photos/v2/list"
+    static var path: String = "https://picsum.photos/v2/list?limit=5"
 }

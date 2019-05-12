@@ -80,7 +80,7 @@ public final class Network: NSObject {
                         data = securityManager.decrypt(data: data)
                     }
                     
-                    if let outputDescription = String(data: data, encoding: .utf8) {
+                    if let outputDescription: String = self.decoder.string(from: data) {
                         print("⬇️\t[N] Response from: \(url)\n\(outputDescription)")
                     }
                     
