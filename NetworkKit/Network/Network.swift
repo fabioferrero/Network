@@ -12,16 +12,18 @@ public final class Network: NSObject {
     
     /// The singleton for the Network class. This class can be used only by
     /// means of this `shared` instance.
-    public static let shared: Network = Network()
-    private override init() { super.init() }
+    public static let `default`: Network = Network()
+    public init(with configuration: Configuration = .default) { self.configuration = configuration; super.init() }
     
     public var securityManager: SecurityManager?
     public var decoder: DataDecoder = DataManager.default
     public var encoder: DataEncoder = DataManager.default
     
+    private var configuration: Configuration
+    
     lazy var backgroundSession: URLSession = {
-        let configuration: URLSessionConfiguration = .background(withIdentifier: Constants.sessionIdentifier)
-        let urlSession = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let sessionConfiguration: URLSessionConfiguration = .background(withIdentifier: configuration.sessionIdentifier)
+        let urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
         return urlSession
     }()
     
@@ -102,7 +104,7 @@ extension Network {
     func createHTTPRequest(method: HTTPMethod = .get, for url: URL, with data: Data = Data()) -> URLRequest {
         var httpRequest = URLRequest(url: url,
                                      cachePolicy: .useProtocolCachePolicy,
-                                     timeoutInterval: Constants.timeoutInterval)
+                                     timeoutInterval: configuration.timeoutInterval)
         httpRequest.httpMethod = String(describing: method)
         httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
         httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
@@ -147,10 +149,14 @@ extension Network {
 }
 
 extension Network {
-    #warning("TODO: Create a configuration instead of Constants")
-    struct Constants {
-        static let sessionIdentifier: String = "Network.BackgroundSessionIdentifier"
-        static let timeoutInterval: TimeInterval = 10.0
+    public struct Configuration {
+        let sessionIdentifier: String
+        let timeoutInterval: TimeInterval
+        
+        public static let `default` = Configuration(
+            sessionIdentifier: "Network.BackgroundSessionIdentifier",
+            timeoutInterval: 10.0
+        )
     }
 }
 

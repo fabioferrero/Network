@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     
     var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
     
-    var network: Network = Network.shared
+    var network: Network = Network.default
     
     override func viewDidLoad() {
         super.viewDidLoad()
