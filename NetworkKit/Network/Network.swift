@@ -23,7 +23,10 @@ public final class Network: NSObject {
     
     lazy var backgroundSession: URLSession = {
         let sessionConfiguration: URLSessionConfiguration = .background(withIdentifier: configuration.sessionIdentifier)
+        sessionConfiguration.timeoutIntervalForRequest = configuration.timeoutIntervalForRequest
+        sessionConfiguration.timeoutIntervalForResource = configuration.timeoutIntervalForResource
         let urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
+
         return urlSession
     }()
     
@@ -104,7 +107,7 @@ extension Network {
     func createHTTPRequest(method: HTTPMethod = .get, for url: URL, with data: Data = Data()) -> URLRequest {
         var httpRequest = URLRequest(url: url,
                                      cachePolicy: .useProtocolCachePolicy,
-                                     timeoutInterval: configuration.timeoutInterval)
+                                     timeoutInterval: configuration.timeoutIntervalForRequest)
         httpRequest.httpMethod = String(describing: method)
         httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
         httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
@@ -151,11 +154,13 @@ extension Network {
 extension Network {
     public struct Configuration {
         let sessionIdentifier: String
-        let timeoutInterval: TimeInterval
+        let timeoutIntervalForRequest: TimeInterval
+        let timeoutIntervalForResource: TimeInterval
         
         public static let `default` = Configuration(
             sessionIdentifier: "Network.BackgroundSessionIdentifier",
-            timeoutInterval: 10.0
+            timeoutIntervalForRequest: 5.0,
+            timeoutIntervalForResource: 20.0
         )
     }
 }
