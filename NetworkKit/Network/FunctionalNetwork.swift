@@ -9,17 +9,17 @@
 import Foundation
 import FutureKit
 
-extension Network {
-    public struct Endpoint {
-        var url: String
-        var method: HTTPMethod
-        
-        public init(url: String, method: HTTPMethod = .get) {
-            self.url = url
-            self.method = method
-        }
-    }
+public struct Endpoint {
+    var url: String
+    var method: HTTPMethod
     
+    public init(url: String, method: HTTPMethod = .get) {
+        self.url = url
+        self.method = method
+    }
+}
+
+extension Network {
     public func request(_ endpoint: Endpoint) -> Future<Data> {
         return request(endpoint, with: nil as Optional<String>) // Help compiler insted of using default argument list
     }

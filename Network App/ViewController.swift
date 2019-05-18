@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FutureKit
+import NetworkKit
 
 class ViewController: UIViewController {
     
@@ -18,8 +20,13 @@ class ViewController: UIViewController {
     private let manager = PhotoLoader()
     private let functionalManager = FunctionalPhotoLoader()
     
+    typealias PhotoListLoading = () -> Future<[Photo]>
+    var photoListLoading: PhotoListLoading!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        photoListLoading = combine(3, with: Network.default.photoListNetworking)
         
         loader.hidesWhenStopped = true
         view.addSubview(loader)
@@ -44,13 +51,22 @@ class ViewController: UIViewController {
         }
         
         // In background (no UI needed)
-        functionalManager.loadPhotoList(numberOfPhotos: 5)
+        functionalManager.loadPhotoListV3(numberOfPhotos: 5)
             .onSuccess(on: .background) { photoList in
                 Logger.log(.debug, message: "Got \(photoList.count) photos")
             }
             .onFailure(on: .background) { error in
                 Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
             }
+        
+        photoListLoading().observe(on: .background) { (result) in
+            switch result {
+            case .success(let photoList):
+                Logger.log(.debug, message: "Got \(photoList.count) photos")
+            case .failure(let error):
+                Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
+            }
+        }
     }
     
     @IBAction func switchDidChanged(_ sender: UISwitch) {

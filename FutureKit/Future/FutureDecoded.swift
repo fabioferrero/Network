@@ -14,4 +14,10 @@ public extension Future where Value == Data {
             return try JSONDecoder().decode(type, from: value)
         }
     }
+    
+    func decoded<NewValue: Decodable>() -> Future<NewValue> {
+        return transformed { value in
+            return try JSONDecoder().decode(NewValue.self, from: value)
+        }
+    }
 }
