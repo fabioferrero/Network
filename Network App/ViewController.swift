@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet private weak var errorSwitch: UISwitch!
     @IBOutlet private weak var imageView: UIImageView!
     
-    var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
+    private let loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
     
     private let manager = PhotoLoader()
     
@@ -28,6 +28,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func callButtonTapped() {
+        // In foreground (UI stuff happens)
         loader.startAnimating()
         manager.loadRandomPhoto().observe { result in
             self.loader.stopAnimating()
@@ -41,30 +42,15 @@ class ViewController: UIViewController {
             }
         }
         
-        // In background
+        // In background (no UI needed)
         manager.loadPhotoList()
             .onSuccess(on: .background) { photoList in
                 Logger.log(.debug, message: "Got \(photoList.count) photos")
-            }.onFailure(on: .background) { error in
+            }
+            .onFailure(on: .background) { error in
                 Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
             }
     }
-
-//    func callMyService() {
-//        let newPost = NewPost(userId: 3, title: "Title", body: "Body")
-//        loader.startAnimating()
-//        network.call(service: Services.createNewPost, input: newPost) { [weak self] result in
-//            guard let self = self else { return }
-//            self.loader.stopAnimating()
-//            switch result {
-//            case .success(let thePostThatYouWereWaitingFor):
-//                thePostThatYouWereWaitingFor.foo()
-//            case .failure(let error):
-//                let alert = Alert(title: "Error", message: error.localizedDescription)
-//                alert.show(from: self)
-//            }
-//        }
-//    }
     
     @IBAction func switchDidChanged(_ sender: UISwitch) {
         shouldFail = sender.isOn
