@@ -58,9 +58,7 @@ public final class Network: NSObject {
         do {
             let data: Data = try encoder.encode(input)
             
-            if let inputDescription: String = encoder.string(for: input) {
-                print("⬆️\t[N] Request to: \(url)\n\(inputDescription)")
-            }
+            log(input: input, for: url, with: S.method)
             
             var httpRequest: URLRequest = createHTTPRequest(method: S.method, for: url, with: data)
             
@@ -83,9 +81,7 @@ public final class Network: NSObject {
                         data = securityManager.decrypt(data: data)
                     }
                     
-                    if let outputDescription: String = self.decoder.string(from: data) {
-                        print("⬇️\t[N] Response from: \(url)\n\(outputDescription)")
-                    }
+                    self.log(data: data, from: url, with: urlResponse)
                     
                     do {
                         let response: Output = try self.decoder.decode(S.Output.self, from: data)
@@ -224,7 +220,7 @@ extension Network: URLSessionDownloadDelegate {
     }
 }
 
-/// The standard `DataEncoder` and `DataDecoder` for the Network singleton
+/// The default `DataEncoder` and `DataDecoder` for a Network instance
 fileprivate struct DataManager: DataEncoder, DataDecoder {
     
     static var `default`: DataManager = DataManager()

@@ -64,7 +64,7 @@ extension Network {
 }
 
 extension Network {
-    private func log<Input: Encodable>(input: Input?, for url: URL, with method: HTTPMethod) {
+    func log<Input: Encodable>(input: Input?, for url: URL, with method: HTTPMethod) {
         let httpMethod: String = String(describing: method)
         print("⬆️\t[N] \(httpMethod) Request to \(url)")
         if let input = input, let inputDescription: String = encoder.string(for: input) {
@@ -72,7 +72,7 @@ extension Network {
         }
     }
     
-    private func log(data: Data, from url: URL, with urlResponse: URLResponse?) {
+    func log(data: Data, from url: URL, with urlResponse: URLResponse?) {
         if let code: Int = (urlResponse as? HTTPURLResponse)?.statusCode,
             let httpCode = HTTPStatusCode(rawValue: code) {
             print("⬇️\t[N] Response from \(url) -> \(httpCode)", terminator: "")
