@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import NetworkKit
-
-var shouldFail: Bool = false
 
 class ViewController: UIViewController {
     
@@ -18,7 +15,7 @@ class ViewController: UIViewController {
     
     var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
     
-    var network: Network = Network.default
+    private let manager = PhotoLoader()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,73 +29,45 @@ class ViewController: UIViewController {
     
     @IBAction func callButtonTapped() {
         loader.startAnimating()
-        network.request(service: GetRandomPhoto.self)
-            .transformed(with: UIImage.imageFromData)
-            .onSuccess { photo in
-                self.loader.stopAnimating()
-                self.imageView.image = photo
-            }.onFailure { error in
-                self.loader.stopAnimating()
-                let alert = Alert(title: "Error", message: error.localizedDescription)
-                alert.show(from: self)
-            }
-        
-        // In background
-        network.request(service: GetPhotoList.self)
-            .decoded(to: [Photo].self)
-            .observe(on: .background) { result in
-                switch result {
-                case .success(let photoList):
-                    Logger.log(.debug, message: "Got \(photoList.count) photos")
-                case .failure(let error):
-                    Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
-                }
-            }
-    }
-
-    func callMyService() {
-        let newPost = NewPost(userId: 3, title: "Title", body: "Body")
-        loader.startAnimating()
-        network.call(service: Services.createNewPost, input: newPost) { [weak self] result in
-            guard let self = self else { return }
+        manager.loadRandomPhoto().observe { result in
             self.loader.stopAnimating()
+            
             switch result {
-            case .success(let thePostThatYouWereWaitingFor):
-                thePostThatYouWereWaitingFor.foo()
+            case .success(let photo):
+                self.imageView.image = photo
             case .failure(let error):
                 let alert = Alert(title: "Error", message: error.localizedDescription)
                 alert.show(from: self)
             }
         }
+        
+        // In background
+        manager.loadPhotoList()
+            .onSuccess(on: .background) { photoList in
+                Logger.log(.debug, message: "Got \(photoList.count) photos")
+            }.onFailure(on: .background) { error in
+                Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
+            }
     }
+
+//    func callMyService() {
+//        let newPost = NewPost(userId: 3, title: "Title", body: "Body")
+//        loader.startAnimating()
+//        network.call(service: Services.createNewPost, input: newPost) { [weak self] result in
+//            guard let self = self else { return }
+//            self.loader.stopAnimating()
+//            switch result {
+//            case .success(let thePostThatYouWereWaitingFor):
+//                thePostThatYouWereWaitingFor.foo()
+//            case .failure(let error):
+//                let alert = Alert(title: "Error", message: error.localizedDescription)
+//                alert.show(from: self)
+//            }
+//        }
+//    }
     
     @IBAction func switchDidChanged(_ sender: UISwitch) {
         shouldFail = sender.isOn
-    }
-}
-
-extension UIImage {
-    enum Error: Swift.Error, LocalizedError {
-        case imageNotCreated
-        case mockedError
-        
-        var errorDescription: String? {
-            switch self {
-            case .imageNotCreated: return "Impossible to create image"
-            case .mockedError: return "The image was not so great"
-            }
-        }
-    }
-    
-    static func imageFromData(_ data: Data) throws -> UIImage {
-        if shouldFail {
-            throw UIImage.Error.mockedError
-        }
-        if let image = UIImage(data: data) {
-            return image
-        } else {
-            throw UIImage.Error.imageNotCreated
-        }
     }
 }
 
