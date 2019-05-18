@@ -12,29 +12,6 @@ import FutureKit
 
 var shouldFail: Bool = false
 
-struct PhotoLoader {
-    private var network: Network
-    
-    init(with network: Network = Network.default) {
-        self.network = network
-    }
-    
-    func loadRandomSquarePhoto(size: Int) -> Future<UIImage> {
-        let endpoint = Endpoint(url: "https://picsum.photos/\(size)")
-        return network.request(endpoint).transformed(with: UIImage.imageFromData)
-    }
-    
-    func loadRandomPhoto(width: Int, height: Int) -> Future<UIImage> {
-        let endpoint = Endpoint(url: "https://picsum.photos/\(width)/\(height)")
-        return network.request(endpoint).transformed(with: UIImage.imageFromData)
-    }
-    
-    func loadPhotoList() -> Future<[Photo]> {
-        let endpoint = Endpoint(url: "https://picsum.photos/v2/list?limit=5")
-        return network.request(endpoint).decoded()
-    }
-}
-
 typealias Networking = (Endpoint) -> Future<Data>
 
 /// This is an example class that, in different versions of the same method,
