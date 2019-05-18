@@ -10,32 +10,6 @@ import Foundation
 import NetworkKit
 
 enum Services {
-    static let createNewPost = CreateNewPost.self
-    static let errorService = ErrorService.self
-}
-
-struct CreateNewPost: IOService {
-    typealias Input = NewPost
-    typealias Output = Post
-    
-    static var method: HTTPMethod = .post
-    static var path: String = "https://jsonplaceholder.typicode.com/posts"
-}
-
-struct ErrorService: IOService {
-    typealias Input = EmptyPayload
-    typealias Output = EmptyPayload
-    
-    static var method: HTTPMethod = .post
-    static var path: String = "https://fakeservice.error/"
-}
-
-struct GetRandomPhoto: DataService {
-    typealias Output = Photo
-    static var path: String = "https://picsum.photos/480"
-}
-
-struct GetPhotoList: DataService {
-    typealias Output = [Photo]
-    static var path: String = "https://picsum.photos/v2/list?limit=5"
+//    static let createNewPost = CreateNewPost.self
+//    static let errorService = ErrorService.self
 }

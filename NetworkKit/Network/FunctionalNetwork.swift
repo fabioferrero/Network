@@ -9,15 +9,7 @@
 import Foundation
 import FutureKit
 
-public struct Endpoint {
-    var url: String
-    var method: HTTPMethod
-    
-    public init(url: String, method: HTTPMethod = .get) {
-        self.url = url
-        self.method = method
-    }
-}
+public typealias Networking = (Endpoint) -> Future<Data>
 
 extension Network {
     public func request(_ endpoint: Endpoint) -> Future<Data> {

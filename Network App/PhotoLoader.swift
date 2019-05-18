@@ -37,19 +37,28 @@ struct PhotoLoader {
 
 typealias Networking = (Endpoint) -> Future<Data>
 
+/// This is an example class that, in different versions of the same method,
+/// shows the advantages ov using a functional network approach
 struct FunctionalPhotoLoader {
+    
+    /// A networking function. It simply takes an Endpoint as input, and
+    /// returns a Future<Data> as output. The key point here is that it is
+    /// independent from the actual implementation under the hood.
     private let networking: Networking
     
+    // We pass a default implementation to the Loader, just for easy-to-use API
     init(with networking: @escaping Networking = Network.default.request) {
         self.networking = networking
     }
     
-    func loadPhotoList(numberOfPhotos: Int) -> Future<[Photo]> {
+    // Here, calls the networking function as usual
+    func loadPhotoListV1(numberOfPhotos: Int) -> Future<[Photo]> {
         let endpoint = Endpoint.photoList(numberOfPhotos: numberOfPhotos)
         return networking(endpoint).decoded()
     }
     
-    func loadPhotoListV1(numberOfPhotos: Int) -> Future<[Photo]> {
+    // Here, we combine an endpoint to the networking closure, just for demonstration
+    func loadPhotoListV2(numberOfPhotos: Int) -> Future<[Photo]> {
         let endpoint = Endpoint.photoList(numberOfPhotos: numberOfPhotos)
         let networking = combine(endpoint, with: self.networking)
         
@@ -58,44 +67,15 @@ struct FunctionalPhotoLoader {
         return networking().decoded()
     }
     
-    func loadPhotoListV2(numberOfPhotos: Int) -> Future<[Photo]> {
+    // Here, we chain the creation of a Endpoint with che calling closure
+    func loadPhotoListV3(numberOfPhotos: Int) -> Future<[Photo]> {
         let networking = chain(Endpoint.photoList, to: self.networking)
         return networking(numberOfPhotos).decoded()
     }
     
-    func loadPhotoListV3(numberOfPhotos: Int) -> Future<[Photo]> {
+    // Here, we also chain the calling closure with the instance metod of decoding
+    func loadPhotoListV4(numberOfPhotos: Int) -> Future<[Photo]> {
         let networking = chain(Endpoint.photoList, to: self.networking)
         return chain(networking, to: Future.decoded)(numberOfPhotos)
     }
-}
-
-extension Endpoint {
-    static func photoList(numberOfPhotos: Int) -> Endpoint {
-        return Endpoint(url: "https://picsum.photos/v2/list?limit=\(numberOfPhotos)")
-    }
-}
-
-extension Network {
-    var photoListNetworking: (_ numberOfPhotos: Int) -> Future<[Photo]> {
-        let networking = chain(Endpoint.photoList, to: request)
-        return chain(networking, to: Future.decoded)
-    }
-}
-
-// Turns an (A) -> B function into a () -> B function,
-// by using a constant value for A.
-func combine<A, B>(_ value: A, with closure: @escaping (A) -> B) -> () -> B {
-    return { closure(value) }
-}
-
-// Turns an (A) -> B and a (B) -> C function into a
-// (A) -> C function, by chaining them together.
-func chain<A, B, C>(_ inner: @escaping (A) -> B, to outer: @escaping (B) -> C) -> (A) -> C {
-    return { outer(inner($0)) }
-}
-
-// Turns an (A) -> B and a (B) -> () -> C (a.k.a. instance methods) function into a
-// (A) -> C function, by chaining them together.
-func chain<A, B, C>(_ inner: @escaping (A) -> B, to outer: @escaping (B) -> () -> C) -> (A) -> C {
-    return { outer(inner($0))() }
 }

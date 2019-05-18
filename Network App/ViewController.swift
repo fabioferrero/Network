@@ -10,35 +10,34 @@ import UIKit
 import FutureKit
 import NetworkKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
     @IBOutlet private weak var errorSwitch: UISwitch!
     @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var loader: UIActivityIndicatorView!
     
-    private let loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
-    
-    private let manager = PhotoLoader()
-    private let functionalManager = FunctionalPhotoLoader()
+    private let manager = FunctionalPhotoLoader()
     
     typealias PhotoListLoading = () -> Future<[Photo]>
     var photoListLoading: PhotoListLoading!
     
+    typealias RandomPhotoLoading = () -> Future<Data>
+    var randomPhotoLoading: RandomPhotoLoading!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // This should be done by external Coordinator, so that this view controller
+        // knows nothing about internal networking logic
         photoListLoading = combine(3, with: Network.default.photoListNetworking)
-        
-        loader.hidesWhenStopped = true
-        view.addSubview(loader)
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        loader.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loader.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 100).isActive = true
+        randomPhotoLoading = combine(1080, with: Network.default.randomSquarePhotoNetworking)
     }
     
     @IBAction func callButtonTapped() {
         // In foreground (UI stuff happens)
         loader.startAnimating()
-        manager.loadRandomSquarePhoto(size: 1080).observe { result in
+        randomPhotoLoading().transformed(with: UIImage.imageFromData).observe { [weak self] result in
+            guard let self = self else { return }
             self.loader.stopAnimating()
             
             switch result {
@@ -51,7 +50,7 @@ class ViewController: UIViewController {
         }
         
         // In background (no UI needed)
-        functionalManager.loadPhotoListV3(numberOfPhotos: 5)
+        manager.loadPhotoListV4(numberOfPhotos: 5)
             .onSuccess(on: .background) { photoList in
                 Logger.log(.debug, message: "Got \(photoList.count) photos")
             }
@@ -74,6 +73,7 @@ class ViewController: UIViewController {
     }
 }
 
+/// Small utility to present UIAlertController
 class Alert {
     
     let title: String
@@ -82,7 +82,6 @@ class Alert {
     private var alertController: UIAlertController
     
     init(title: String, message: String) {
-        
         self.title = title
         self.message = message
         

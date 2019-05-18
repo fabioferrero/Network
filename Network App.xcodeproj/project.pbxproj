@@ -18,6 +18,9 @@
 		B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BB20CD1F2000A39F69 /* Environment.swift */; };
 		B42C08BE20CD1F2100A39F69 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42C08BC20CD1F2000A39F69 /* Logger.swift */; };
 		B455052322902653000E383C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B455052222902653000E383C /* Extensions.swift */; };
+		B455052522903D13000E383C /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B455052422903D13000E383C /* Functional.swift */; };
+		B455052B229051AF000E383C /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B455052A229051AF000E383C /* Endpoint.swift */; };
+		B455052D229051FF000E383C /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = B455052C229051FF000E383C /* Endpoints.swift */; };
 		B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AEBE4227F4B73004C9ABC /* Models.swift */; };
 		B46AEBEF227F4D93004C9ABC /* NetworkKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B46AEBED227F4D93004C9ABC /* NetworkKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B46AEBF2227F4D93004C9ABC /* NetworkKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */; };
@@ -87,6 +90,9 @@
 		B42C08BB20CD1F2000A39F69 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		B42C08BC20CD1F2000A39F69 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		B455052222902653000E383C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		B455052422903D13000E383C /* Functional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functional.swift; sourceTree = "<group>"; };
+		B455052A229051AF000E383C /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		B455052C229051FF000E383C /* Endpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
 		B46AEBE4227F4B73004C9ABC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B46AEBEB227F4D92004C9ABC /* NetworkKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NetworkKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B46AEBED227F4D93004C9ABC /* NetworkKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkKit.h; sourceTree = "<group>"; };
@@ -168,6 +174,7 @@
 				E14D0519205D7CDF0094A002 /* Network.swift */,
 				B41947F3227CB9E800C22D85 /* FutureNetwork.swift */,
 				B4F40D6122823B250090B413 /* FunctionalNetwork.swift */,
+				B455052A229051AF000E383C /* Endpoint.swift */,
 				B46AEC00227F53EB004C9ABC /* Service.swift */,
 				B4B5E2122279C0B400E6C560 /* URLSession.swift */,
 				B4A6D1F02269FC26005B66BC /* SecurityManager.swift */,
@@ -220,14 +227,16 @@
 			isa = PBXGroup;
 			children = (
 				E168D0322045C2AC00F8C79F /* AppDelegate.swift */,
+				E168D0362045C2AC00F8C79F /* Main.storyboard */,
 				B46AEBE4227F4B73004C9ABC /* Models.swift */,
 				B4A6D1F6226A03A2005B66BC /* Services.swift */,
+				B455052C229051FF000E383C /* Endpoints.swift */,
 				E168D0342045C2AC00F8C79F /* ViewController.swift */,
 				B4810EF8228F07F9001578F1 /* PhotoLoader.swift */,
-				B42C08BB20CD1F2000A39F69 /* Environment.swift */,
 				B42C08BC20CD1F2000A39F69 /* Logger.swift */,
+				B42C08BB20CD1F2000A39F69 /* Environment.swift */,
+				B455052422903D13000E383C /* Functional.swift */,
 				B455052222902653000E383C /* Extensions.swift */,
-				E168D0362045C2AC00F8C79F /* Main.storyboard */,
 				E168D0392045C2AC00F8C79F /* Assets.xcassets */,
 				E168D03B2045C2AC00F8C79F /* LaunchScreen.storyboard */,
 				E168D03E2045C2AC00F8C79F /* Info.plist */,
@@ -405,6 +414,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B46AEBF7227F4DEA004C9ABC /* Network.swift in Sources */,
+				B455052B229051AF000E383C /* Endpoint.swift in Sources */,
 				B46AEC01227F53EB004C9ABC /* Service.swift in Sources */,
 				B4F40D6222823B250090B413 /* FunctionalNetwork.swift in Sources */,
 				B46AEBF8227F4DEA004C9ABC /* FutureNetwork.swift in Sources */,
@@ -423,8 +433,10 @@
 				E168D0352045C2AC00F8C79F /* ViewController.swift in Sources */,
 				B46AEBE5227F4B73004C9ABC /* Models.swift in Sources */,
 				B455052322902653000E383C /* Extensions.swift in Sources */,
+				B455052D229051FF000E383C /* Endpoints.swift in Sources */,
 				B42C08BD20CD1F2100A39F69 /* Environment.swift in Sources */,
 				B4810EF9228F07F9001578F1 /* PhotoLoader.swift in Sources */,
+				B455052522903D13000E383C /* Functional.swift in Sources */,
 				E168D0332045C2AC00F8C79F /* AppDelegate.swift in Sources */,
 				B4A6D1F7226A03A2005B66BC /* Services.swift in Sources */,
 			);

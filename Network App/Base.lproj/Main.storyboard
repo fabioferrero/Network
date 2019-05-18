@@ -45,6 +45,9 @@
                                     <constraint firstAttribute="width" constant="240" id="pmc-7J-bP3"/>
                                 </constraints>
                             </imageView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="8wo-Yo-bgo">
+                                <rect key="frame" x="169" y="200.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -53,8 +56,10 @@
                             <constraint firstItem="9iZ-HV-Lj1" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KRd-bZ-ubG"/>
                             <constraint firstItem="9iZ-HV-Lj1" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="70" id="YJr-l6-O8Z"/>
                             <constraint firstItem="epY-nT-SSc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZOO-dA-gQ5"/>
+                            <constraint firstItem="8wo-Yo-bgo" firstAttribute="centerY" secondItem="vDZ-px-Ew9" secondAttribute="centerY" id="gqd-VP-vNa"/>
                             <constraint firstItem="vDZ-px-Ew9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="nqY-nI-8ll"/>
                             <constraint firstItem="9iZ-HV-Lj1" firstAttribute="top" secondItem="vDZ-px-Ew9" secondAttribute="bottom" constant="42.5" id="sIG-36-dKE"/>
+                            <constraint firstItem="8wo-Yo-bgo" firstAttribute="centerX" secondItem="vDZ-px-Ew9" secondAttribute="centerX" id="unV-pU-T8b"/>
                             <constraint firstItem="Mz0-i8-hQy" firstAttribute="top" secondItem="epY-nT-SSc" secondAttribute="bottom" constant="8" id="xp8-0p-cAo"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -63,6 +68,7 @@
                     <connections>
                         <outlet property="errorSwitch" destination="Mz0-i8-hQy" id="Dyd-S5-jrY"/>
                         <outlet property="imageView" destination="vDZ-px-Ew9" id="9Ef-dM-8Os"/>
+                        <outlet property="loader" destination="8wo-Yo-bgo" id="El7-SP-xKy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
