@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     private let loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
     
     private let manager = PhotoLoader()
+    private let functionalManager = FunctionalPhotoLoader()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +31,7 @@ class ViewController: UIViewController {
     @IBAction func callButtonTapped() {
         // In foreground (UI stuff happens)
         loader.startAnimating()
-        manager.loadRandomPhoto().observe { result in
+        manager.loadRandomSquarePhoto(size: 1080).observe { result in
             self.loader.stopAnimating()
             
             switch result {
@@ -43,7 +44,7 @@ class ViewController: UIViewController {
         }
         
         // In background (no UI needed)
-        manager.loadPhotoList()
+        functionalManager.loadPhotoList(numberOfPhotos: 5)
             .onSuccess(on: .background) { photoList in
                 Logger.log(.debug, message: "Got \(photoList.count) photos")
             }

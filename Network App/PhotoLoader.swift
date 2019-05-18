@@ -19,8 +19,13 @@ struct PhotoLoader {
         self.network = network
     }
     
-    func loadRandomPhoto() -> Future<UIImage> {
-        let endpoint = Network.Endpoint(url: "https://picsum.photos/480")
+    func loadRandomSquarePhoto(size: Int) -> Future<UIImage> {
+        let endpoint = Network.Endpoint(url: "https://picsum.photos/\(size)")
+        return network.request(endpoint).transformed(with: UIImage.imageFromData)
+    }
+    
+    func loadRandomPhoto(width: Int, height: Int) -> Future<UIImage> {
+        let endpoint = Network.Endpoint(url: "https://picsum.photos/\(width)/\(height)")
         return network.request(endpoint).transformed(with: UIImage.imageFromData)
     }
     
@@ -30,27 +35,39 @@ struct PhotoLoader {
     }
 }
 
-extension UIImage {
-    enum Error: Swift.Error, LocalizedError {
-        case imageNotCreated
-        case mockedError
-        
-        var errorDescription: String? {
-            switch self {
-            case .imageNotCreated: return "Impossible to create image"
-            case .mockedError: return "The image was not so great"
-            }
-        }
+typealias PhotoListLoading = (_ numberOfPhotos: Int) -> Future<[Photo]>
+typealias Networking = (Network.Endpoint) -> Future<Data>
+
+struct FunctionalPhotoLoader {
+    private let networking: Networking
+    
+    init(with networking: @escaping Networking = Network.default.request) {
+        self.networking = networking
     }
     
-    static func imageFromData(_ data: Data) throws -> UIImage {
-        if shouldFail {
-            throw UIImage.Error.mockedError
-        }
-        if let image = UIImage(data: data) {
-            return image
-        } else {
-            throw UIImage.Error.imageNotCreated
-        }
+    func loadPhotoList(numberOfPhotos: Int) -> Future<[Photo]> {
+        let endpoint = Network.Endpoint(url: "https://picsum.photos/v2/list?limit=\(numberOfPhotos)")
+        return networking(endpoint).decoded()
     }
+    
+    func loadPhotoListV1(numberOfPhotos: Int) -> Future<[Photo]> {
+        let endpoint = Network.Endpoint(url: "https://picsum.photos/v2/list?limit=\(numberOfPhotos)")
+        let networking = combine(endpoint, with: self.networking)
+        
+        // Our new networking function can now be called without
+        // having to supply any argument at the call site.
+        return networking().decoded()
+    }
+}
+
+// This turns an (A) -> B function into a () -> B function,
+// by using a constant value for A.
+func combine<A, B>(_ value: A, with closure: @escaping (A) -> B) -> () -> B {
+    return { closure(value) }
+}
+
+// This turns an (A) -> B and a (B) -> C function into a
+// (A) -> C function, by chaining them together.
+func chain<A, B, C>(_ inner: @escaping (A) -> B, to outer: @escaping (B) -> C) -> (A) -> C {
+    return { outer(inner($0)) }
 }
