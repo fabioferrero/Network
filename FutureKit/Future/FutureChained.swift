@@ -15,7 +15,7 @@ public extension Future {
         let promise = Promise<NextValue>()
         
         // Look for changes to the current Future
-        observe { result in
+        observe(on: .background) { result in
             switch result {
             case .success(let value):
                 do {
@@ -25,7 +25,7 @@ public extension Future {
                     
                     // Now observe the new future, in order to correctly resolve
                     // the Promise with a value or an error
-                    future.observe { result in
+                    future.observe(on: .background) { result in
                         switch result {
                         case .success(let value):
                             promise.resolve(with: value)
