@@ -16,8 +16,6 @@ final class ViewController: UIViewController {
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var loader: UIActivityIndicatorView!
     
-    private let manager = FunctionalPhotoLoader()
-    
     typealias PhotoListLoading = () -> Future<[Photo]>
     var photoListLoading: PhotoListLoading!
     
@@ -50,15 +48,7 @@ final class ViewController: UIViewController {
         }
         
         // In background (no UI needed)
-        manager.loadPhotoListV4(numberOfPhotos: 5)
-            .onSuccess(on: .background) { photoList in
-                Logger.log(.debug, message: "Got \(photoList.count) photos")
-            }
-            .onFailure(on: .background) { error in
-                Logger.log(.error, message: "Retrieved error: \(error.localizedDescription)")
-            }
-        
-        photoListLoading().observe(on: .background) { (result) in
+        photoListLoading().observe(on: .background) { result in
             switch result {
             case .success(let photoList):
                 Logger.log(.debug, message: "Got \(photoList.count) photos")

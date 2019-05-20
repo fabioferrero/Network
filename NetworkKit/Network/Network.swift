@@ -16,7 +16,7 @@ public final class Network: NSObject {
     public init(with configuration: Configuration = .default) { self.configuration = configuration; super.init() }
     
     public var securityManager: SecurityManager?
-    public var decoder: DataDecoder = DataManager.default
+    
     public var encoder: DataEncoder = DataManager.default
     
     private var configuration: Configuration
@@ -40,63 +40,7 @@ public final class Network: NSObject {
     
     public var backgroudSessionCompletionHandler: (() -> Void)?
     
-    // MARK: Network call
-    
     public enum Queue { case main; case background }
-    
-    public func call<S: IOService, Input, Output>(service: S.Type, input: Input, onQueue responseQueue: Queue = .main, onCompletion: @escaping (_ response: Result<Output, Swift.Error>) -> Void) where Input == S.Input, Output == S.Output {
-        
-        func completion(_ response: Result<Output, Swift.Error>) {
-            if responseQueue == Queue.main { DispatchQueue.main.async { onCompletion(response) } }
-            else { onCompletion(response) }
-        }
-        
-        guard let url = URL(string: S.path) else {
-            completion(Result.failure(Error.invalidURL)); return
-        }
-        
-        do {
-            let data: Data = try encoder.encode(input)
-            
-            log(input: input, for: url, with: S.method)
-            
-            var httpRequest: URLRequest = createHTTPRequest(method: S.method, for: url, with: data)
-            
-            let task: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
-            
-            self.add(task: task, withRelatedCompletionHandler: { [weak self] data, urlResponse, error in
-                defer { self?.remove(task: task) }
-                guard let self = self else { return }
-                
-                if let error = error {
-                    if let httpResponse: HTTPURLResponse = urlResponse {
-                        completion(Result.failure(Error.httpError(httpResponse, message: error.localizedDescription)))
-                    } else {
-                        completion(Result.failure(Error.networkError(message: error.localizedDescription)))
-                    }
-                } else {
-                    guard var data: Data = data else { completion(Result.failure(Error.missingData)); return }
-                    
-                    if let securityManager: SecurityManager = self.securityManager {
-                        data = securityManager.decrypt(data: data)
-                    }
-                    
-                    self.log(data: data, from: url, with: urlResponse)
-                    
-                    do {
-                        let response: Output = try self.decoder.decode(S.Output.self, from: data)
-                        completion(Result.success(response))
-                    } catch {
-                        completion(Result.failure(Error.decodingError(message: error.localizedDescription)))
-                    }
-                }
-            })
-            
-            task.resume()
-        } catch {
-            completion(Result.failure(Error.encodingError(message: error.localizedDescription)))
-        }
-    }
 }
 
 extension Network {
@@ -108,28 +52,6 @@ extension Network {
         httpRequest.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-type")
         httpRequest.httpBody = securityManager?.encrypt(data: data) ?? data
         return httpRequest
-    }
-}
-
-extension Network {
-    enum Error: Swift.Error, LocalizedError {
-        case invalidURL
-        case missingData
-        case encodingError(message: String)
-        case decodingError(message: String)
-        case networkError(message: String)
-        case httpError(_ urlResponse: HTTPURLResponse, message: String)
-        
-        var errorDescription: String? {
-            switch self {
-            case .invalidURL: return "Invalid URL in request: cannot create URL from String."
-            case .missingData: return "Missing data in response."
-            case .encodingError(let errorMessage): return "Error during payload encoding: \(errorMessage)"
-            case .decodingError(let errorMessage): return "Error during data decoding: \(errorMessage)"
-            case .networkError(let errorMessage): return errorMessage
-            case let .httpError(response, errorMessage): return "[\(response.statusCode)] " + errorMessage
-            }
-        }
     }
 }
 
@@ -215,34 +137,7 @@ extension Network: URLSessionDownloadDelegate {
             let data = try Data(contentsOf: location)
             dataBuffers[downloadTask]?.append(data)
         } catch {
-            print("❌\t[E] Error: " + error.localizedDescription)
+            Logger.log(error: error)
         }
-    }
-}
-
-/// The default `DataEncoder` and `DataDecoder` for a Network instance
-fileprivate struct DataManager: DataEncoder, DataDecoder {
-    
-    static var `default`: DataManager = DataManager()
-    
-    private var encoder: JSONEncoder
-    private var decoder: JSONDecoder
-    
-    private init() {
-        let encoder = JSONEncoder()
-        #if DEBUG
-        encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
-        #endif
-        
-        self.encoder = encoder
-        self.decoder = JSONDecoder()
-    }
-    
-    func encode<Input: Encodable>(_ value: Input) throws -> Data {
-        return try encoder.encode(value)
-    }
-    
-    func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output {
-        return try decoder.decode(type, from: data)
     }
 }

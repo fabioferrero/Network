@@ -12,8 +12,6 @@ import FutureKit
 
 var shouldFail: Bool = false
 
-typealias Networking = (Endpoint) -> Future<Data>
-
 /// This is an example class that, in different versions of the same method,
 /// shows the advantages ov using a functional network approach
 struct FunctionalPhotoLoader {

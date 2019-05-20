@@ -32,3 +32,30 @@ extension DataDecoder {
         return String(data: jsonData, encoding: String.Encoding.utf8)
     }
 }
+
+/// The default `DataEncoder` and `DataDecoder` for a Network instance
+struct DataManager: DataEncoder, DataDecoder {
+    
+    static var `default`: DataManager = DataManager()
+    
+    private var encoder: JSONEncoder
+    private var decoder: JSONDecoder
+    
+    private init() {
+        let encoder = JSONEncoder()
+        #if DEBUG
+        encoder.outputFormatting = JSONEncoder.OutputFormatting.prettyPrinted
+        #endif
+        
+        self.encoder = encoder
+        self.decoder = JSONDecoder()
+    }
+    
+    func encode<Input: Encodable>(_ value: Input) throws -> Data {
+        return try encoder.encode(value)
+    }
+    
+    func decode<Output: Decodable>(_ type: Output.Type, from data: Data) throws -> Output {
+        return try decoder.decode(type, from: data)
+    }
+}

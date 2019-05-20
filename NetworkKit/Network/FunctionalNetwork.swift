@@ -29,7 +29,7 @@ extension Network {
             let data: Data
             if let input = input { data = try encoder.encode(input) } else { data = Data() }
             
-            log(input: input, for: url, with: endpoint.method)
+            Logger.log(input: input, for: url, with: endpoint.method)
             
             var httpRequest: URLRequest = createHTTPRequest(method: endpoint.method, for: url, with: data)
             let task: URLSessionDownloadTask = backgroundSession.downloadTask(with: httpRequest)
@@ -46,7 +46,7 @@ extension Network {
                     }
                 } else {
                     if let data = data {
-                        self?.log(data: data, from: url, with: urlResponse)
+                        Logger.log(data: data, from: url, with: urlResponse)
                         promise.resolve(with: data)
                     } else {
                         promise.reject(with: Error.missingData)
