@@ -8,25 +8,6 @@
 
 import Foundation
 
-struct EmptyPayload: Codable {}
-
-struct Post: Decodable {
-    var userId: Int
-    var id: Int
-    var title: String
-    var body: String
-    
-    func foo() {
-        Logger.log(.verbose, message: "foo on \(String(describing: self))! foo!")
-    }
-}
-
-struct NewPost: Encodable {
-    var userId: Int
-    var title: String
-    var body: String
-}
-
 struct Photo: Decodable {
     var id: String
     var author: String
