@@ -102,6 +102,7 @@
 		B4A6D1F02269FC26005B66BC /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		B4A6D1F22269FC54005B66BC /* Encoder&Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encoder&Decoder.swift"; sourceTree = "<group>"; };
 		B4A6D1F42269FCEF005B66BC /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
+		B4D19FCF23AFB28400D09E23 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B4F40D6122823B250090B413 /* FunctionalNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalNetwork.swift; sourceTree = "<group>"; };
 		E14D0519205D7CDF0094A002 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		E168D02F2045C2AC00F8C79F /* Network App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Network App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +158,7 @@
 		B41947E0227CB8F400C22D85 /* FutureKit */ = {
 			isa = PBXGroup;
 			children = (
+				B4D19FCF23AFB28400D09E23 /* README.md */,
 				B41947E1227CB8F400C22D85 /* FutureKit.h */,
 				B41947E2227CB8F400C22D85 /* Info.plist */,
 				B41115942274991100192AF2 /* Future */,
