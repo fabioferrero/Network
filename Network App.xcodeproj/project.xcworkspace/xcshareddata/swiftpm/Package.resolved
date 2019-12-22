@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "FutureKit",
+        "repositoryURL": "https://github.com/fabioferrero/FutureKit.git",
+        "state": {
+          "branch": null,
+          "revision": "8a6c14af43699d48b91262d1f8f2e3617496c5cd",
+          "version": "0.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
