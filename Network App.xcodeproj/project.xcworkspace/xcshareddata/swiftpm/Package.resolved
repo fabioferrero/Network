@@ -9,6 +9,15 @@
           "revision": "8a6c14af43699d48b91262d1f8f2e3617496c5cd",
           "version": "0.1.0"
         }
+      },
+      {
+        "package": "NetworkKit",
+        "repositoryURL": "https://github.com/fabioferrero/NetworkKit.git",
+        "state": {
+          "branch": null,
+          "revision": "402d85ea86b8ea8e2999c2429c5b75e8726014e1",
+          "version": "0.1.0"
+        }
       }
     ]
   },
